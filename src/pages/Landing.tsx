@@ -11,7 +11,7 @@ export default function Landing() {
             <div className="w-7 h-7 rounded-[8px] bg-[#007aff] flex items-center justify-center">
               <Heart className="w-3.5 h-3.5 text-white" fill="white" />
             </div>
-            <span className="text-[16px] font-semibold text-[#1d1d1f] tracking-tight">Halo Mi Health</span>
+            <span className="text-[16px] font-semibold text-white tracking-tight">Halo Mi Health</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -29,7 +29,7 @@ export default function Landing() {
           <Shield className="w-[14px] h-[14px]" />
           Your health data, always within reach
         </div>
-        <h1 className="text-[48px] lg:text-[64px] font-bold text-[#1d1d1f] tracking-tight leading-tight max-w-3xl mx-auto">
+        <h1 className="text-[48px] lg:text-[64px] font-bold text-white tracking-tight leading-tight max-w-3xl mx-auto">
           Your health history.
           <br />
           <span className="text-[#007aff]">Always with you.</span>
@@ -57,21 +57,21 @@ export default function Landing() {
             <div className="w-[48px] h-[48px] rounded-[14px] bg-[#e8f0fe] flex items-center justify-center mx-auto mb-4">
               <Camera className="w-[24px] h-[24px] text-[#007aff]" />
             </div>
-            <h3 className="text-[17px] font-semibold text-[#1d1d1f]">Snap a photo</h3>
+            <h3 className="text-[17px] font-semibold text-white">Snap a photo</h3>
             <p className="text-[14px] text-[#6e6e73] mt-1">Take a picture of handwritten notes from your doctor.</p>
           </div>
           <div className="apple-card-static p-6 text-center">
             <div className="w-[48px] h-[48px] rounded-[14px] bg-[#e8f5e9] flex items-center justify-center mx-auto mb-4">
               <Shield className="w-[24px] h-[24px] text-[#34c759]" />
             </div>
-            <h3 className="text-[17px] font-semibold text-[#1d1d1f]">Secure vault</h3>
+            <h3 className="text-[17px] font-semibold text-white">Secure vault</h3>
             <p className="text-[14px] text-[#6e6e73] mt-1">All records encrypted and stored safely.</p>
           </div>
           <div className="apple-card-static p-6 text-center">
             <div className="w-[48px] h-[48px] rounded-[14px] bg-[#fef0d9] flex items-center justify-center mx-auto mb-4">
               <Pill className="w-[24px] h-[24px] text-[#ff9f0a]" />
             </div>
-            <h3 className="text-[17px] font-semibold text-[#1d1d1f]">Stay organised</h3>
+            <h3 className="text-[17px] font-semibold text-white">Stay organised</h3>
             <p className="text-[14px] text-[#6e6e73] mt-1">Track medications, appointments, and more.</p>
           </div>
         </div>

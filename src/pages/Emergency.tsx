@@ -124,17 +124,17 @@ export default function Emergency() {
         <div className="space-y-4">
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Information</h2>
+              <h2 className="text-[17px] font-semibold text-white">Personal Information</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Label className="text-[13px] text-white/60">Full Name</Label>
                 <Input value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Month & Year of Birth</Label>
+                <Label className="text-[13px] text-white/60">Month & Year of Birth</Label>
                 <Input type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Location (City / Region)</Label>
+                <Label className="text-[13px] text-white/60">Location (City / Region)</Label>
                 <Input value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="e.g. Durban, KwaZulu-Natal" />
               </div>
             </CardContent>
@@ -142,14 +142,14 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Biometrics</h2>
+              <h2 className="text-[17px] font-semibold text-white">Personal Biometrics</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
+                  <Label className="text-[13px] text-white/60">Height (cm)</Label>
                   <Input type="number" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
+                  <Label className="text-[13px] text-white/60">Weight (kg)</Label>
                   <Input type="number" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default function Emergency() {
                 </p>
               )}
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
+                <Label className="text-[13px] text-white/60">Waist-Hip Ratio</Label>
                 <Input type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} placeholder="e.g. 0.85" />
               </div>
             </CardContent>
@@ -167,13 +167,13 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Details</h2>
+              <h2 className="text-[17px] font-semibold text-white">Medical Details</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Blood Type</Label>
+                <Label className="text-[13px] text-white/60">Blood Type</Label>
                 <Input value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} placeholder="e.g. A+" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Allergies</Label>
+                <Label className="text-[13px] text-white/60">Allergies</Label>
                 <Input value={form.allergies || ""} onChange={e => update("allergies", e.target.value)} placeholder="e.g. Penicillin, Peanuts" />
               </div>
             </CardContent>
@@ -181,18 +181,18 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Next of Kin</h2>
+              <h2 className="text-[17px] font-semibold text-white">Next of Kin</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Label className="text-[13px] text-white/60">Full Name</Label>
                 <Input value={form.next_of_kin_name || ""} onChange={e => update("next_of_kin_name", e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Phone</Label>
+                  <Label className="text-[13px] text-white/60">Phone</Label>
                   <Input value={form.next_of_kin_phone || ""} onChange={e => update("next_of_kin_phone", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Relationship</Label>
+                  <Label className="text-[13px] text-white/60">Relationship</Label>
                   <Input value={form.next_of_kin_relationship || ""} onChange={e => update("next_of_kin_relationship", e.target.value)} placeholder="e.g. Spouse" />
                 </div>
               </div>
@@ -201,13 +201,13 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Emergency Contacts</h2>
+              <h2 className="text-[17px] font-semibold text-white">Emergency Contacts</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Contact Name</Label>
+                <Label className="text-[13px] text-white/60">Contact Name</Label>
                 <Input value={form.emergency_contact_name || ""} onChange={e => update("emergency_contact_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Contact Phone</Label>
+                <Label className="text-[13px] text-white/60">Contact Phone</Label>
                 <Input value={form.emergency_contact_phone || ""} onChange={e => update("emergency_contact_phone", e.target.value)} />
               </div>
             </CardContent>
@@ -215,14 +215,14 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Ambulance Service</h2>
+              <h2 className="text-[17px] font-semibold text-white">Ambulance Service</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Service Name</Label>
+                  <Label className="text-[13px] text-white/60">Service Name</Label>
                   <Input value={form.ambulance_service || ""} onChange={e => update("ambulance_service", e.target.value)} placeholder="e.g. Netcare 911" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Number</Label>
+                  <Label className="text-[13px] text-white/60">Number</Label>
                   <Input value={form.ambulance_number || ""} onChange={e => update("ambulance_number", e.target.value)} placeholder="e.g. 082 911" />
                 </div>
               </div>
@@ -231,14 +231,14 @@ export default function Emergency() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Health Insurance / Medical Aid</h2>
+              <h2 className="text-[17px] font-semibold text-white">Health Insurance / Medical Aid</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Scheme</Label>
+                  <Label className="text-[13px] text-white/60">Scheme</Label>
                   <Input value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} placeholder="e.g. Discovery Health" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Membership No.</Label>
+                  <Label className="text-[13px] text-white/60">Membership No.</Label>
                   <Input value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
                 </div>
               </div>
@@ -261,8 +261,8 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Personal Information</h2>
-                <User className="w-[18px] h-[18px] text-[#6e6e73]" />
+                <h2 className="text-[15px] font-semibold text-white">Personal Information</h2>
+                <User className="w-[18px] h-[18px] text-white/60" />
               </div>
               <div className="space-y-3">
                 <Row icon={User} label="Full Name" value={profile?.full_name} />
@@ -275,7 +275,7 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Biometrics</h2>
+                <h2 className="text-[15px] font-semibold text-white">Biometrics</h2>
                 <Heart className="w-[18px] h-[18px] text-[#ff3b30]" />
               </div>
               <div className="space-y-3">
@@ -292,7 +292,7 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Medical</h2>
+                <h2 className="text-[15px] font-semibold text-white">Medical</h2>
                 <Heart className="w-[18px] h-[18px] text-[#ff3b30]" />
               </div>
               <div className="space-y-3">
@@ -305,8 +305,8 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Next of Kin</h2>
-                <UserPlus className="w-[18px] h-[18px] text-[#6e6e73]" />
+                <h2 className="text-[15px] font-semibold text-white">Next of Kin</h2>
+                <UserPlus className="w-[18px] h-[18px] text-white/60" />
               </div>
               <div className="space-y-3">
                 <Row icon={User} label="Name" value={profile?.next_of_kin_name} />
@@ -319,7 +319,7 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Emergency Contact</h2>
+                <h2 className="text-[15px] font-semibold text-white">Emergency Contact</h2>
                 <Phone className="w-[18px] h-[18px] text-[#ff3b30]" />
               </div>
               <div className="space-y-3">
@@ -332,7 +332,7 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Ambulance Service</h2>
+                <h2 className="text-[15px] font-semibold text-white">Ambulance Service</h2>
                 <AmbulanceIcon className="w-[18px] h-[18px] text-[#ff3b30]" />
               </div>
               <div className="space-y-3">
@@ -345,7 +345,7 @@ export default function Emergency() {
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-[15px] font-semibold text-[#1d1d1f]">Health Insurance</h2>
+                <h2 className="text-[15px] font-semibold text-white">Health Insurance</h2>
                 <Shield className="w-[18px] h-[18px] text-[#34c759]" />
               </div>
               <div className="space-y-3">
@@ -364,11 +364,11 @@ function Row({ icon: Icon, label, value }: { icon: any; label: string; value: st
   return (
     <div className="flex items-center gap-3">
       <div className="w-[32px] h-[32px] rounded-[8px] bg-[#f5f5f7] flex items-center justify-center flex-shrink-0">
-        <Icon className="w-[15px] h-[15px] text-[#6e6e73]" />
+        <Icon className="w-[15px] h-[15px] text-white/60" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[12px] text-[#6e6e73] uppercase tracking-wide font-medium">{label}</p>
-        <p className="text-[15px] font-medium text-[#1d1d1f] truncate">{value ?? "Not set"}</p>
+        <p className="text-[12px] text-white/60 uppercase tracking-wide font-medium">{label}</p>
+        <p className="text-[15px] font-medium text-white truncate">{value ?? "Not set"}</p>
       </div>
     </div>
   )

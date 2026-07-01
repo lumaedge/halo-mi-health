@@ -38,15 +38,15 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-[400px] animate-fade-in">
           <div className="text-center mb-8">
             <div className="w-[56px] h-[56px] rounded-[16px] bg-[#007aff] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#007aff]/20">
               <Heart className="w-[28px] h-[28px] text-white" fill="white" />
             </div>
-            <h1 className="text-[28px] font-bold text-[#1d1d1f] tracking-tight">Welcome back</h1>
-            <p className="text-[16px] text-[#6e6e73] mt-1">Sign in to your health account</p>
+            <h1 className="text-[28px] font-bold text-white tracking-tight">Welcome back</h1>
+            <p className="text-[16px] text-white/60 mt-1">Sign in to your health account</p>
           </div>
 
           <Card>
@@ -75,7 +75,7 @@ export default function Login() {
                   />
                 </div>
                 {error && (
-                  <p className="text-[14px] text-[#ff3b30] bg-[#fce8e6] px-4 py-3 rounded-[12px]">{error}</p>
+                  <p className="text-[14px] text-[#ff3b30] bg-[#ff3b30]/10 px-4 py-3 rounded-[12px]">{error}</p>
                 )}
                 <Button type="submit" disabled={pending} className="w-full h-[50px] gap-2">
                   {pending ? (
@@ -89,7 +89,7 @@ export default function Login() {
                 </Button>
               </form>
               <div className="mt-6 text-center">
-                <p className="text-[14px] text-[#6e6e73]">
+                <p className="text-[14px] text-white/60">
                   Don&apos;t have an account?{" "}
                   <Link to="/register" className="text-[#007aff] font-medium hover:underline">
                     Create one

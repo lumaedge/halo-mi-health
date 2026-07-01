@@ -106,8 +106,8 @@ export default function Profile() {
                   <Activity className="w-[20px] h-[20px] text-[#34c759]" />
                 </div>
                 <div>
-                  <p className="text-[13px] text-[#6e6e73] font-medium">Your BMI</p>
-                  <p className="text-[22px] font-bold text-[#1d1d1f]">{bmi.toFixed(1)}</p>
+                  <p className="text-[13px] text-white/60 font-medium">Your BMI</p>
+                  <p className="text-[22px] font-bold text-white">{bmi.toFixed(1)}</p>
                 </div>
               </div>
               <Badge className={`${bmiColor} border-0 text-[13px] font-semibold`}>
@@ -122,25 +122,25 @@ export default function Profile() {
         <div className="space-y-4">
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Details</h2>
+              <h2 className="text-[17px] font-semibold text-white">Personal Details</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Label className="text-[13px] text-white/60">Full Name</Label>
                 <Input value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Email</Label>
+                <Label className="text-[13px] text-white/60">Email</Label>
                 <Input value={form.email || ""} onChange={e => update("email", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Phone</Label>
+                <Label className="text-[13px] text-white/60">Phone</Label>
                 <Input value={form.phone || ""} onChange={e => update("phone", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Date of Birth</Label>
+                <Label className="text-[13px] text-white/60">Date of Birth</Label>
                 <Input type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Location</Label>
+                <Label className="text-[13px] text-white/60">Location</Label>
                 <Input value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="City / Region" />
               </div>
             </CardContent>
@@ -148,24 +148,24 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Biometrics</h2>
+              <h2 className="text-[17px] font-semibold text-white">Biometrics</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
+                  <Label className="text-[13px] text-white/60">Height (cm)</Label>
                   <Input type="number" step="0.1" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
+                  <Label className="text-[13px] text-white/60">Weight (kg)</Label>
                   <Input type="number" step="0.1" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
               </div>
               {bmi && (
                 <div className="rounded-[12px] bg-[#f5f5f7] p-3">
-                  <p className="text-[13px] text-[#6e6e73]">BMI: <span className="font-semibold text-[#1d1d1f]">{bmi.toFixed(1)}</span> ({bmiCategory})</p>
+                  <p className="text-[13px] text-white/60">BMI: <span className="font-semibold text-white">{bmi.toFixed(1)}</span> ({bmiCategory})</p>
                 </div>
               )}
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
+                <Label className="text-[13px] text-white/60">Waist-Hip Ratio</Label>
                 <Input type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} />
               </div>
             </CardContent>
@@ -173,14 +173,14 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Details</h2>
+              <h2 className="text-[17px] font-semibold text-white">Medical Details</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Blood Type</Label>
+                  <Label className="text-[13px] text-white/60">Blood Type</Label>
                   <Input value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">ID / Passport No.</Label>
+                  <Label className="text-[13px] text-white/60">ID / Passport No.</Label>
                   <Input value={form.id_number || ""} onChange={e => update("id_number", e.target.value)} />
                 </div>
               </div>
@@ -189,14 +189,14 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5 space-y-4">
-              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Aid / Insurance</h2>
+              <h2 className="text-[17px] font-semibold text-white">Medical Aid / Insurance</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Scheme</Label>
+                  <Label className="text-[13px] text-white/60">Scheme</Label>
                   <Input value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Membership No.</Label>
+                  <Label className="text-[13px] text-white/60">Membership No.</Label>
                   <Input value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1d1d1f] mb-3">Personal Details</h2>
+              <h2 className="text-[15px] font-semibold text-white mb-3">Personal Details</h2>
               <div className="space-y-3">
                 <ProfileRow icon={User} label="Full Name" value={profile?.full_name} />
                 <ProfileRow icon={Mail} label="Email" value={profile?.email} />
@@ -242,7 +242,7 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1d1d1f] mb-3">Biometrics</h2>
+              <h2 className="text-[15px] font-semibold text-white mb-3">Biometrics</h2>
               <div className="space-y-3">
                 <ProfileRow icon={Ruler} label="Height" value={profile?.height_cm ? `${profile.height_cm} cm` : undefined} />
                 <ProfileRow icon={Weight} label="Weight" value={profile?.weight_kg ? `${profile.weight_kg} kg` : undefined} />
@@ -254,7 +254,7 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1d1d1f] mb-3">Medical</h2>
+              <h2 className="text-[15px] font-semibold text-white mb-3">Medical</h2>
               <div className="space-y-3">
                 <ProfileRow icon={Heart} label="Blood Type" value={profile?.blood_type} />
                 <ProfileRow icon={Scale} label="ID / Passport" value={profile?.id_number} />
@@ -264,7 +264,7 @@ export default function Profile() {
 
           <Card>
             <CardContent className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1d1d1f] mb-3">Medical Aid</h2>
+              <h2 className="text-[15px] font-semibold text-white mb-3">Medical Aid</h2>
               <div className="space-y-3">
                 <ProfileRow icon={ShieldIcon} label="Scheme" value={profile?.medical_scheme} />
                 <ProfileRow icon={Smartphone} label="Membership No." value={profile?.membership_number} />
@@ -285,11 +285,11 @@ function ProfileRow({ icon: Icon, label, value }: { icon: any; label: string; va
   return (
     <div className="flex items-center gap-3">
       <div className="w-[32px] h-[32px] rounded-[8px] bg-[#f5f5f7] flex items-center justify-center flex-shrink-0">
-        <Icon className="w-[15px] h-[15px] text-[#6e6e73]" />
+        <Icon className="w-[15px] h-[15px] text-white/60" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[12px] text-[#6e6e73] uppercase tracking-wide font-medium">{label}</p>
-        <p className="text-[15px] font-medium text-[#1d1d1f] truncate">{value ?? "Not set"}</p>
+        <p className="text-[12px] text-white/60 uppercase tracking-wide font-medium">{label}</p>
+        <p className="text-[15px] font-medium text-white truncate">{value ?? "Not set"}</p>
       </div>
     </div>
   )

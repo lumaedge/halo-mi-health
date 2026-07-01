@@ -80,7 +80,7 @@ export default function Medications() {
     load()
   }
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
+  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/60" /></div>
 
   const activeMeds = meds.filter(m => m.is_active)
   const inactiveMeds = meds.filter(m => !m.is_active)
@@ -89,8 +89,8 @@ export default function Medications() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Medications</h1>
-          <p className="text-[16px] text-[#6e6e73] mt-1">Track your medications and dosages</p>
+          <h1 className="text-[32px] font-bold text-white tracking-tight">Medications</h1>
+          <p className="text-[16px] text-white/60 mt-1">Track your medications and dosages</p>
         </div>
         <Button onClick={openNew} className="gap-2"><Plus className="w-[18px] h-[18px]" />Add</Button>
       </div>
@@ -99,10 +99,10 @@ export default function Medications() {
         <Card className="apple-card">
           <CardContent className="flex flex-col items-center py-16">
             <div className="w-[56px] h-[56px] rounded-[16px] bg-[#f5f5f7] flex items-center justify-center mx-auto mb-4">
-              <Pill className="w-[28px] h-[28px] text-[#6e6e73]" />
+              <Pill className="w-[28px] h-[28px] text-white/60" />
             </div>
-            <p className="text-[16px] font-medium text-[#1d1d1f]">No medications tracked</p>
-            <p className="text-[14px] text-[#6e6e73] mt-1">Add your first medication.</p>
+            <p className="text-[16px] font-medium text-white">No medications tracked</p>
+            <p className="text-[14px] text-white/60 mt-1">Add your first medication.</p>
             <Button onClick={openNew} className="mt-4 gap-2"><Plus className="w-[16px] h-[16px]" />Add Medication</Button>
           </CardContent>
         </Card>
@@ -111,7 +111,7 @@ export default function Medications() {
           {activeMeds.map(med => <MedCard key={med.id} med={med} onEdit={openEdit} onToggle={toggleActive} onDelete={deleteMed} />)}
           {inactiveMeds.length > 0 && (
             <>
-              <p className="text-[13px] font-medium text-[#6e6e73] uppercase tracking-wider pt-4 pb-2">Inactive</p>
+              <p className="text-[13px] font-medium text-white/60 uppercase tracking-wider pt-4 pb-2">Inactive</p>
               {inactiveMeds.map(med => <MedCard key={med.id} med={med} onEdit={openEdit} onToggle={toggleActive} onDelete={deleteMed} />)}
             </>
           )}
@@ -122,7 +122,7 @@ export default function Medications() {
         <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[20px]">{editing ? "Edit Medication" : "Add Medication"}</DialogTitle>
-            <DialogDescription className="text-[14px] text-[#6e6e73]">Enter the details of your medication.</DialogDescription>
+            <DialogDescription className="text-[14px] text-white/60">Enter the details of your medication.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -156,7 +156,7 @@ export default function Medications() {
             <div className="space-y-2">
               <Label htmlFor="instructions">Instructions (optional)</Label>
               <textarea id="instructions" rows={2} value={instructions} onChange={e => setInstructions(e.target.value)}
-                className="w-full rounded-[14px] border border-[#e5e5ea] bg-white px-4 py-3 text-[15px] text-[#1d1d1f] placeholder:text-[#6e6e73] focus:outline-none focus:ring-2 focus:ring-[#007aff]/30 focus:border-[#007aff] transition-all duration-200 resize-none"
+                className="w-full rounded-[14px] border border-white/10 bg-white/10 px-4 py-3 text-[15px] text-white placeholder:text-white/40 backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-[#007aff]/50 focus:border-[#007aff] transition-all duration-200 resize-none"
                 placeholder="e.g. Take with food" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -183,19 +183,19 @@ function MedCard({ med, onEdit, onToggle, onDelete }: { med: Medication; onEdit:
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="text-[15px] font-semibold text-[#1d1d1f]">{med.name}</p>
+              <p className="text-[15px] font-semibold text-white">{med.name}</p>
               <Badge variant={med.is_active ? "success" : "secondary"} className="text-[10px] px-1.5 py-0 h-4">{med.is_active ? "Active" : "Inactive"}</Badge>
             </div>
-            <p className="text-[13px] text-[#6e6e73] mt-0.5">{med.dosage} · {med.frequency}{med.route ? ` · ${med.route}` : ""}</p>
-            {med.instructions && <p className="text-[12px] text-[#6e6e73] mt-1 italic">{med.instructions}</p>}
-            <div className="flex items-center gap-3 mt-2 text-[12px] text-[#6e6e73]">
+            <p className="text-[13px] text-white/60 mt-0.5">{med.dosage} · {med.frequency}{med.route ? ` · ${med.route}` : ""}</p>
+            {med.instructions && <p className="text-[12px] text-white/60 mt-1 italic">{med.instructions}</p>}
+            <div className="flex items-center gap-3 mt-2 text-[12px] text-white/60">
               <span>Started {new Date(med.start_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}</span>
               {med.end_date && <span>· Until {new Date(med.end_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}</span>}
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button onClick={() => onEdit(med)} className="p-2 rounded-full hover:bg-[#f5f5f7] transition-colors" title="Edit">
-              <Pencil className="w-4 h-4 text-[#6e6e73]" />
+              <Pencil className="w-4 h-4 text-white/60" />
             </button>
             <button onClick={() => onToggle(med)} className="p-2 rounded-full hover:bg-[#f5f5f7] transition-colors" title={med.is_active ? "Mark inactive" : "Mark active"}>
               <div className={`w-4 h-4 rounded-sm border-2 ${med.is_active ? "bg-[#34c759] border-[#34c759]" : "border-[#6e6e73]"}`} />

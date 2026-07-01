@@ -46,8 +46,8 @@ export default function Vault() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Medical Records</h1>
-          <p className="text-[16px] text-[#6e6e73] mt-1">Your secure document repository</p>
+          <h1 className="text-[32px] font-bold text-white tracking-tight">Medical Records</h1>
+          <p className="text-[16px] text-white/60 mt-1">Your secure document repository</p>
         </div>
         <Button className="gap-2 shrink-0" onClick={() => setUploadOpen(true)}>
           <Upload className="w-[18px] h-[18px]" />
@@ -56,7 +56,7 @@ export default function Vault() {
       </div>
 
       <div className="relative max-w-md">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#6e6e73]" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-white/60" />
         <Input placeholder="Search records..." className="pl-[42px]" />
       </div>
 
@@ -75,7 +75,7 @@ export default function Vault() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" />
+          <Loader2 className="w-6 h-6 animate-spin text-white/60" />
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -89,8 +89,8 @@ export default function Vault() {
                       <Icon className="w-[22px] h-[22px]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-[15px] font-medium text-[#1d1d1f] truncate">{item.title}</h3>
-                      <p className="text-[13px] text-[#6e6e73] mt-0.5">
+                      <h3 className="text-[15px] font-medium text-white truncate">{item.title}</h3>
+                      <p className="text-[13px] text-white/60 mt-0.5">
                         {new Date(item.date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
@@ -101,7 +101,7 @@ export default function Vault() {
                       </div>
                       <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#e5e5ea]/40">
                         <button
-                          className="flex items-center gap-1 text-[13px] text-[#6e6e73] hover:text-[#007aff] transition-colors"
+                          className="flex items-center gap-1 text-[13px] text-white/60 hover:text-[#007aff] transition-colors"
                           onClick={() => {
                             if (item.is_handwritten && item.original_image_url) {
                               setPreviewUrl(item.original_image_url)
@@ -121,10 +121,10 @@ export default function Vault() {
           }) : (
             <div className="col-span-full text-center py-16">
               <div className="w-[56px] h-[56px] rounded-[16px] bg-[#f5f5f7] flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-[28px] h-[28px] text-[#6e6e73]" />
+                <FileText className="w-[28px] h-[28px] text-white/60" />
               </div>
-              <p className="text-[16px] font-medium text-[#1d1d1f]">No records yet</p>
-              <p className="text-[14px] text-[#6e6e73] mt-1 max-w-sm mx-auto">
+              <p className="text-[16px] font-medium text-white">No records yet</p>
+              <p className="text-[14px] text-white/60 mt-1 max-w-sm mx-auto">
                 Upload photos of handwritten notes from your doctor to keep them safe and organised.
               </p>
               <Button className="mt-4 gap-2" onClick={() => setUploadOpen(true)}>
@@ -148,7 +148,7 @@ function iconBg(type: string) {
     referral: "w-[40px] h-[40px] rounded-[12px] bg-[#f0e8fc] flex items-center justify-center text-[#af52de]",
     vaccination: "w-[40px] h-[40px] rounded-[12px] bg-[#e4f2fb] flex items-center justify-center text-[#5ac8fa]",
   }
-  return bgs[type] || "w-[40px] h-[40px] rounded-[12px] bg-[#f5f5f7] flex items-center justify-center text-[#6e6e73]"
+  return bgs[type] || "w-[40px] h-[40px] rounded-[12px] bg-[#f5f5f7] flex items-center justify-center text-white/60"
 }
 
 function badgeVariant(type: string) {

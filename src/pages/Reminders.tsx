@@ -104,7 +104,7 @@ export default function Reminders() {
     setReminders(prev => prev.filter(r => r.id !== id))
   }
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
+  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/60" /></div>
 
   const now = new Date()
   const dueReminders = reminders.filter(r => r.enabled && r.next_due_date && new Date(r.next_due_date) <= now)
@@ -115,8 +115,8 @@ export default function Reminders() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Reminders</h1>
-          <p className="text-[16px] text-[#6e6e73] mt-1">Stay on top of your health</p>
+          <h1 className="text-[32px] font-bold text-white tracking-tight">Reminders</h1>
+          <p className="text-[16px] text-white/60 mt-1">Stay on top of your health</p>
         </div>
         <Button onClick={() => setShowNew(true)} className="gap-2"><Plus className="w-[18px] h-[18px]" />Add</Button>
       </div>
@@ -133,17 +133,17 @@ export default function Reminders() {
       )}
 
       <section>
-        <h2 className="text-[18px] font-semibold text-[#1d1d1f] mb-3">
+        <h2 className="text-[18px] font-semibold text-white mb-3">
           {dueReminders.length > 0 ? "Upcoming" : "All Reminders"}
         </h2>
         {reminders.length === 0 ? (
           <Card className="apple-card">
             <CardContent className="flex flex-col items-center py-16">
               <div className="w-[56px] h-[56px] rounded-[16px] bg-[#f5f5f7] flex items-center justify-center mb-4">
-                <Bell className="w-[28px] h-[28px] text-[#6e6e73]" />
+                <Bell className="w-[28px] h-[28px] text-white/60" />
               </div>
-              <p className="text-[16px] font-medium text-[#1d1d1f]">No reminders yet</p>
-              <p className="text-[14px] text-[#6e6e73] mt-1">Add reminders for prescriptions, health checks, and more.</p>
+              <p className="text-[16px] font-medium text-white">No reminders yet</p>
+              <p className="text-[14px] text-white/60 mt-1">Add reminders for prescriptions, health checks, and more.</p>
               <Button onClick={() => setShowNew(true)} className="mt-4 gap-2"><Plus className="w-[16px] h-[16px]" />Add Reminder</Button>
             </CardContent>
           </Card>
@@ -152,7 +152,7 @@ export default function Reminders() {
             {upcomingReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={toggleReminder} onComplete={completeReminder} onDelete={deleteReminder} />)}
             {disabledReminders.length > 0 && (
               <>
-                <p className="text-[13px] font-medium text-[#6e6e73] uppercase tracking-wider pt-4 pb-2">Disabled</p>
+                <p className="text-[13px] font-medium text-white/60 uppercase tracking-wider pt-4 pb-2">Disabled</p>
                 {disabledReminders.map(r => <ReminderCard key={r.id} reminder={r} onToggle={toggleReminder} onComplete={completeReminder} onDelete={deleteReminder} />)}
               </>
             )}
@@ -164,7 +164,7 @@ export default function Reminders() {
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle className="text-[20px]">New Reminder</DialogTitle>
-            <DialogDescription className="text-[14px] text-[#6e6e73]">Set a health reminder for yourself.</DialogDescription>
+            <DialogDescription className="text-[14px] text-white/60">Set a health reminder for yourself.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -173,7 +173,7 @@ export default function Reminders() {
                 {(Object.entries(reminderLabels) as [ReminderType, string][]).map(([key, label]) => (
                   <button key={key} type="button" onClick={() => setType(key)}
                     className={cn("px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-all duration-200",
-                      type === key ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e5e5ea]")}>
+                      type === key ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-white/60 hover:bg-[#e5e5ea]")}>
                     {label}
                   </button>
                 ))}
@@ -186,7 +186,7 @@ export default function Reminders() {
             <div className="space-y-2">
               <Label htmlFor="desc">Description (optional)</Label>
               <textarea id="desc" rows={2} value={description} onChange={e => setDescription(e.target.value)}
-                className="w-full rounded-[14px] border border-[#e5e5ea] bg-white px-4 py-3 text-[15px] text-[#1d1d1f] placeholder:text-[#6e6e73] focus:outline-none focus:ring-2 focus:ring-[#007aff]/30 focus:border-[#007aff] transition-all duration-200 resize-none"
+                className="w-full rounded-[14px] border border-white/10 bg-white/10 px-4 py-3 text-[15px] text-white placeholder:text-white/40 backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-[#007aff]/50 focus:border-[#007aff] transition-all duration-200 resize-none"
                 placeholder="Any additional details..." />
             </div>
             <div className="space-y-2">
@@ -195,12 +195,12 @@ export default function Reminders() {
                 {(["once", "daily", "weekly", "monthly", "annual", "bi_annual"] as ReminderFrequency[]).map(f => (
                   <button key={f} type="button" onClick={() => setFrequency(f)}
                     className={cn("px-3 py-1.5 rounded-[8px] text-[13px] font-medium capitalize transition-all duration-200",
-                      frequency === f ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e5e5ea]")}>
+                      frequency === f ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-white/60 hover:bg-[#e5e5ea]")}>
                     {f === "bi_annual" ? "Every 6 months" : f}
                   </button>
                 ))}
               </div>
-              {frequency === "bi_annual" && <p className="text-[12px] text-[#6e6e73]">Reminds you at months 5 and 6 of each cycle.</p>}
+              {frequency === "bi_annual" && <p className="text-[12px] text-white/60">Reminds you at months 5 and 6 of each cycle.</p>}
             </div>
             {frequency !== "once" && (
               <div className="space-y-2">
@@ -241,17 +241,17 @@ function ReminderCard({ reminder: r, onToggle, onComplete, onDelete }: {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="text-[15px] font-semibold text-[#1d1d1f] truncate">{r.title}</p>
+              <p className="text-[15px] font-semibold text-white truncate">{r.title}</p>
               {isDue && <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4">Due</Badge>}
             </div>
-            {r.description && <p className="text-[13px] text-[#6e6e73] mt-0.5 line-clamp-2">{r.description}</p>}
+            {r.description && <p className="text-[13px] text-white/60 mt-0.5 line-clamp-2">{r.description}</p>}
             <div className="flex items-center gap-3 mt-2">
               <Badge variant="secondary" className="text-[11px] px-2 py-0 h-5 font-normal">{reminderLabels[r.type]}</Badge>
               <Badge variant="outline" className="text-[11px] px-2 py-0 h-5 font-normal capitalize">
                 {r.frequency === "bi_annual" ? "Every 6 months" : r.frequency}
               </Badge>
               {r.next_due_date && (
-                <span className="text-[12px] text-[#6e6e73]">
+                <span className="text-[12px] text-white/60">
                   {isDue ? "Overdue" : `Due ${new Date(r.next_due_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}`}
                 </span>
               )}
@@ -259,7 +259,7 @@ function ReminderCard({ reminder: r, onToggle, onComplete, onDelete }: {
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button onClick={() => onToggle(r.id, !r.enabled)} className="p-2 rounded-full hover:bg-[#f5f5f7] transition-colors" title={r.enabled ? "Disable" : "Enable"}>
-              {r.enabled ? <Bell className="w-4 h-4 text-[#007aff]" /> : <BellOff className="w-4 h-4 text-[#6e6e73]" />}
+              {r.enabled ? <Bell className="w-4 h-4 text-[#007aff]" /> : <BellOff className="w-4 h-4 text-white/60" />}
             </button>
             {r.enabled && r.frequency !== "once" && (
               <button onClick={() => onComplete(r.id)} className="p-2 rounded-full hover:bg-[#f5f5f7] transition-colors" title="Mark completed">
