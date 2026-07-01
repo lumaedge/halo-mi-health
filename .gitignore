@@ -1,0 +1,56 @@
+# dependencies
+/node_modules
+
+# build output
+/dist
+/src-tauri/target
+
+# stale (old Next.js + Capacitor)
+/.next
+/android
+/www
+
+# Android
+/src-tauri/gen/android/.gradle/
+/src-tauri/gen/android/build/
+/src-tauri/gen/android/app/build/
+/src-tauri/gen/android/local.properties
+/src-tauri/gen/android/app/src/main/jniLibs/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# misc
+*.log
+*.pem
+*.tsbuildinfo
+
+# secrets
+keystore/
+*.keystore
+keystore.properties
+.db_password
+
+# generated / stale / binary
+*.apk
+*.dll
+next.config.ts
+next-env.d.ts
+capacitor.config.ts
+eslint.config.mjs
+vite.config.d.ts
+vite.config.js
+MediRecords.apk
+kernel32.dll

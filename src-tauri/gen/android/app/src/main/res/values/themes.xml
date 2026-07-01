@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.halo_mi_health" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#fff5f5f7</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

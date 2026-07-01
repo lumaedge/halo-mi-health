@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #f5f5f7;
+  --color-foreground: #1d1d1f;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  --font-mono: "SF Mono", monospace;
+
+  --color-apple-blue: #007aff;
+  --color-apple-green: #34c759;
+  --color-apple-orange: #ff9f0a;
+  --color-apple-red: #ff3b30;
+  --color-apple-bg: #f5f5f7;
+  --color-apple-card: #ffffff;
+  --color-apple-text: #1d1d1f;
+  --color-apple-secondary: #6e6e73;
+  --color-apple-border: #e5e5ea;
+  --color-apple-separator: #c6c6c8;
+  --color-apple-tint: #007aff;
+  --color-apple-yellow: #ffcc00;
+  --color-apple-purple: #af52de;
+  --color-apple-pink: #ff2d55;
+  --color-apple-teal: #5ac8fa;
+}
+
+body {
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Root wrapper handles safe area on mobile where body padding may not propagate */
+#root {
+  min-height: 100vh;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-stagger > * {
+  animation: slideUp 0.5s ease-out backwards;
+}
+
+.animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.animate-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.animate-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.animate-stagger > *:nth-child(4) { animation-delay: 240ms; }
+.animate-stagger > *:nth-child(5) { animation-delay: 320ms; }
+.animate-stagger > *:nth-child(6) { animation-delay: 400ms; }
+.animate-stagger > *:nth-child(7) { animation-delay: 480ms; }
+
+.apple-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.apple-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  transform: translateY(-1px);
+}
+
+.apple-card-static {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.apple-section-header {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+}
+
+.apple-body {
+  font-size: 16px;
+  line-height: 1.47;
+  color: #1d1d1f;
+}
+
+.apple-secondary {
+  font-size: 14px;
+  line-height: 1.43;
+  color: #6e6e73;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #007aff, #5ac8fa);
+  opacity: 0.25;
+  border-radius: 1px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #007aff;
+  position: absolute;
+  left: 10px;
+  top: 24px;
+  z-index: 1;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.08);
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 50%, #34c759 100%);
+}
+
+.hero-gradient-subtle {
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.06) 0%, rgba(90, 200, 250, 0.04) 100%);
+}
+
+/* Safe area bottom padding for fixed elements (nav bars, modals) */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Safe area top padding for fixed elements */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
