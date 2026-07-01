@@ -6,7 +6,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, Menu, X, ClipboardList, Stethoscope } from "lucide-react"
+import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, Menu, X, ClipboardList, Stethoscope, Bell } from "lucide-react"
 
 const Login = lazy(() => import("@/pages/Login"))
 const Register = lazy(() => import("@/pages/Register"))
@@ -18,6 +18,7 @@ const Profile = lazy(() => import("@/pages/Profile"))
 const Emergency = lazy(() => import("@/pages/Emergency"))
 const HealthChecks = lazy(() => import("@/pages/HealthChecks"))
 const NewConsultation = lazy(() => import("@/pages/NewConsultation"))
+const Reminders = lazy(() => import("@/pages/Reminders"))
 const Share = lazy(() => import("@/pages/Share"))
 const ProviderRecords = lazy(() => import("@/pages/ProviderRecords"))
 const ProviderConsultations = lazy(() => import("@/pages/ProviderConsultations"))
@@ -96,6 +97,7 @@ const drawerNav = [
   {
     section: "Health",
     items: [
+      { href: "/reminders", label: "Reminders", icon: Bell },
       { href: "/health-checks", label: "Health Checks", icon: ClipboardList },
       { href: "/new-consultation", label: "New Consultation", icon: Stethoscope },
     ],
@@ -224,6 +226,7 @@ export default function App() {
           <Route path="/emergency" element={<AuthGuard><AppLayout><Emergency /></AppLayout></AuthGuard>} />
           <Route path="/health-checks" element={<AuthGuard><AppLayout><HealthChecks /></AppLayout></AuthGuard>} />
           <Route path="/new-consultation" element={<AuthGuard><AppLayout><NewConsultation /></AppLayout></AuthGuard>} />
+          <Route path="/reminders" element={<AuthGuard><AppLayout><Reminders /></AppLayout></AuthGuard>} />
           <Route path="/share" element={<AuthGuard><AppLayout><Share /></AppLayout></AuthGuard>} />
           <Route path="/records" element={<AuthGuard><AppLayout><ProviderRecords /></AppLayout></AuthGuard>} />
           <Route path="/consultations" element={<AuthGuard><AppLayout><ProviderConsultations /></AppLayout></AuthGuard>} />

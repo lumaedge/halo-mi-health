@@ -128,6 +128,27 @@ export interface Appointment {
   created_at: string
 }
 
+export type ReminderType = "prescription_refill" | "health_check" | "appointment" | "custom"
+export type ReminderFrequency = "once" | "daily" | "weekly" | "monthly" | "annual" | "bi_annual"
+
+export interface Reminder {
+  id: string
+  user_id: string
+  type: ReminderType
+  title: string
+  description?: string
+  frequency: ReminderFrequency
+  frequency_months: number[]
+  next_due_date?: string
+  last_notified?: string
+  enabled: boolean
+  linked_type?: string
+  linked_id?: string
+  last_completed?: string
+  created_at: string
+  updated_at: string
+}
+
 export interface AuditLog {
   id: string
   user_id: string
