@@ -79,7 +79,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const location = useLocation()
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]"><div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" /></div>
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" /></div>
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />
   return <>{children}</>
 }
@@ -122,8 +122,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const [navExpanded, setNavExpanded] = useState(false)
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7]">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-[#e5e5ea]/30">
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 glass-strong border-b border-[#e5e5ea]/20">
         <div className="flex items-center justify-between h-[52px] px-5">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-[6px] bg-[#007aff] flex items-center justify-center">
@@ -150,7 +150,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       {navExpanded && (
         <>
           <div className="fixed inset-0 z-20 bg-black/20" onClick={() => setNavExpanded(false)} />
-          <div className="fixed bottom-[56px] left-0 right-0 z-30 bg-white/95 backdrop-blur-xl border-t border-[#e5e5ea]/50 rounded-t-[20px] shadow-[0_-4px_20px_rgba(0,0,0,0.08)] animate-slide-up">
+          <div className="fixed bottom-[56px] left-0 right-0 z-30 glass-strong rounded-t-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] animate-slide-up">
             <div className="px-5 py-4 space-y-5 max-h-[40vh] overflow-y-auto">
               {extraNav.map((section) => (
                 <div key={section.section}>
@@ -172,7 +172,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </>
       )}
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-xl border-t border-[#e5e5ea]/50 safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 glass-strong border-t border-white/50 safe-bottom">
         <div className="flex items-center justify-around h-[56px] px-2">
           {tabNav.map((item) => {
             const isActive = pathname === item.href
