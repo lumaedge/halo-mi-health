@@ -80,10 +80,10 @@ export default function PatientDashboard() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="rounded-[24px] p-6 lg:p-8 hero-gradient-subtle border border-[#e5e5ea]/30">
-        <h1 className="text-[32px] lg:text-[36px] font-bold text-white tracking-tight leading-tight">
+        <h1 className="text-[32px] lg:text-[36px] font-bold text-[#1d1d1f] tracking-tight leading-tight">
           {greeting}, {firstName}.
         </h1>
-        <p className="text-[16px] text-white/60 mt-1.5 max-w-lg">
+        <p className="text-[16px] text-[#6e6e73] mt-1.5 max-w-lg">
           Your health records are secure and available whenever you need them.
         </p>
       </div>
@@ -113,12 +113,12 @@ export default function PatientDashboard() {
               </div>
               <Badge variant="secondary" className="text-[12px]">{recordsCount} total</Badge>
             </div>
-            <h3 className="text-[17px] font-semibold text-white mt-3">Medical Records</h3>
+            <h3 className="text-[17px] font-semibold text-[#1d1d1f] mt-3">Medical Records</h3>
             {hasRecords ? (
-              <p className="text-[14px] text-white/60 mt-1">Your records are organised and up to date.</p>
+              <p className="text-[14px] text-[#6e6e73] mt-1">Your records are organised and up to date.</p>
             ) : (
               <div>
-                <p className="text-[14px] text-white/60 mt-1">No records uploaded yet.</p>
+                <p className="text-[14px] text-[#6e6e73] mt-1">No records uploaded yet.</p>
                 <Link to="/vault">
                   <Button size="sm" className="gap-1.5 mt-3">
                     <Plus className="w-[14px] h-[14px]" />
@@ -138,13 +138,13 @@ export default function PatientDashboard() {
               </div>
               <Badge variant="secondary" className="text-[12px]">{hasMeds ? "Active" : "Inactive"}</Badge>
             </div>
-            <h3 className="text-[17px] font-semibold text-white mt-3">Medications</h3>
+            <h3 className="text-[17px] font-semibold text-[#1d1d1f] mt-3">Medications</h3>
             {hasMeds ? (
               <div className="mt-2 space-y-1.5">
                 {activeMeds.slice(0, 2).map((med: any) => (
                   <div key={med.name} className="flex items-center justify-between text-[14px]">
-                    <span className="text-white">{med.name}</span>
-                    <span className="text-white/60">{med.dosage}</span>
+                    <span className="text-[#1d1d1f]">{med.name}</span>
+                    <span className="text-[#6e6e73]">{med.dosage}</span>
                   </div>
                 ))}
                 <Link to="/medications" className="block text-[14px] text-[#007aff] font-medium mt-2">
@@ -153,7 +153,7 @@ export default function PatientDashboard() {
               </div>
             ) : (
               <div>
-                <p className="text-[14px] text-white/60 mt-1">Nothing active.</p>
+                <p className="text-[14px] text-[#6e6e73] mt-1">Nothing active.</p>
                 <Link to="/medications">
                   <Button size="sm" variant="outline" className="gap-1.5 mt-3">
                     <Plus className="w-[14px] h-[14px]" />
@@ -173,14 +173,14 @@ export default function PatientDashboard() {
               </div>
               <Badge variant="secondary" className="text-[12px]">{appointments.length} upcoming</Badge>
             </div>
-            <h3 className="text-[17px] font-semibold text-white mt-3">Appointments</h3>
+            <h3 className="text-[17px] font-semibold text-[#1d1d1f] mt-3">Appointments</h3>
             {hasAppointments ? (
               <div className="mt-2 space-y-2">
                 {appointments.map((apt: any) => (
                   <div key={apt.id} className="flex items-center gap-3 text-[14px]">
                     <div className="w-2 h-2 rounded-full bg-[#007aff]" />
-                    <span className="text-white">{apt.title}</span>
-                    <span className="text-white/60 ml-auto text-[13px]">
+                    <span className="text-[#1d1d1f]">{apt.title}</span>
+                    <span className="text-[#6e6e73] ml-auto text-[13px]">
                       {new Date(apt.date).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
                     </span>
                   </div>
@@ -188,7 +188,7 @@ export default function PatientDashboard() {
               </div>
             ) : (
               <div>
-                <p className="text-[14px] text-white/60 mt-1">No upcoming visits.</p>
+                <p className="text-[14px] text-[#6e6e73] mt-1">No upcoming visits.</p>
                 <Link to="/schedule">
                   <Button size="sm" variant="outline" className="gap-1.5 mt-3">
                     <Plus className="w-[14px] h-[14px]" />
@@ -208,9 +208,9 @@ export default function PatientDashboard() {
               </div>
               <Badge variant="secondary" className="text-[12px]">{conditionsCount} tracked</Badge>
             </div>
-            <h3 className="text-[17px] font-semibold text-white mt-3">Health Profile</h3>
+            <h3 className="text-[17px] font-semibold text-[#1d1d1f] mt-3">Health Profile</h3>
             <div>
-              <p className="text-[14px] text-white/60 mt-1">Manage your health information.</p>
+              <p className="text-[14px] text-[#6e6e73] mt-1">Manage your health information.</p>
               <Link to="/health-checks" className="inline-flex items-center gap-1 mt-3 text-[14px] text-[#007aff] font-medium">
                 View health checks <ArrowRight className="w-[14px] h-[14px]" />
               </Link>
@@ -223,7 +223,7 @@ export default function PatientDashboard() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[17px] font-semibold text-white">Recent Activity</h2>
+              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Recent Activity</h2>
               <Link to="/timeline" className="text-[14px] text-[#007aff] font-medium">View all</Link>
             </div>
             <div className="space-y-0">
@@ -234,8 +234,8 @@ export default function PatientDashboard() {
                 >
                   <div className="w-2 h-2 rounded-full bg-[#007aff] flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-medium text-white truncate">{event.title}</p>
-                    <p className="text-[13px] text-white/60">
+                    <p className="text-[15px] font-medium text-[#1d1d1f] truncate">{event.title}</p>
+                    <p className="text-[13px] text-[#6e6e73]">
                       {new Date(event.date).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}
                     </p>
                   </div>

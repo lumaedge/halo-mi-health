@@ -62,7 +62,7 @@ export default function Conditions() {
     load()
   }
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/60" /></div>
+  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
 
   const chronic = conditions.filter(c => c.is_chronic)
   const acute = conditions.filter(c => !c.is_chronic)
@@ -71,8 +71,8 @@ export default function Conditions() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[32px] font-bold text-white tracking-tight">Conditions</h1>
-          <p className="text-[16px] text-white/60 mt-1">Track your health conditions</p>
+          <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Conditions</h1>
+          <p className="text-[16px] text-[#6e6e73] mt-1">Track your health conditions</p>
         </div>
         <Button onClick={openNew} className="gap-2"><Plus className="w-[18px] h-[18px]" />Add</Button>
       </div>
@@ -81,10 +81,10 @@ export default function Conditions() {
         <Card className="apple-card">
           <CardContent className="flex flex-col items-center py-16">
             <div className="w-[56px] h-[56px] rounded-[16px] bg-[#f5f5f7] flex items-center justify-center mx-auto mb-4">
-              <Stethoscope className="w-[28px] h-[28px] text-white/60" />
+              <Stethoscope className="w-[28px] h-[28px] text-[#6e6e73]" />
             </div>
-            <p className="text-[16px] font-medium text-white">No conditions tracked</p>
-            <p className="text-[14px] text-white/60 mt-1">Add any medical conditions or diagnoses.</p>
+            <p className="text-[16px] font-medium text-[#1d1d1f]">No conditions tracked</p>
+            <p className="text-[14px] text-[#6e6e73] mt-1">Add any medical conditions or diagnoses.</p>
             <Button onClick={openNew} className="mt-4 gap-2"><Plus className="w-[16px] h-[16px]" />Add Condition</Button>
           </CardContent>
         </Card>
@@ -100,7 +100,7 @@ export default function Conditions() {
           )}
           {acute.length > 0 && (
             <>
-              <p className="text-[13px] font-medium text-white/60 uppercase tracking-wider pt-4 pb-2">Acute / Past</p>
+              <p className="text-[13px] font-medium text-[#6e6e73] uppercase tracking-wider pt-4 pb-2">Acute / Past</p>
               {acute.map(c => <ConditionCard key={c.id} condition={c} onEdit={openEdit} onDelete={deleteCondition} />)}
             </>
           )}
@@ -111,7 +111,7 @@ export default function Conditions() {
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle className="text-[20px]">{editing ? "Edit Condition" : "Add Condition"}</DialogTitle>
-            <DialogDescription className="text-[14px] text-white/60">Record a medical condition or diagnosis.</DialogDescription>
+            <DialogDescription className="text-[14px] text-[#6e6e73]">Record a medical condition or diagnosis.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -132,7 +132,7 @@ export default function Conditions() {
             <div className="space-y-2">
               <Label htmlFor="notes">Notes (optional)</Label>
               <textarea id="notes" rows={2} value={notes} onChange={e => setNotes(e.target.value)}
-                className="w-full rounded-[14px] border border-white/10 bg-white/10 px-4 py-3 text-[15px] text-white placeholder:text-white/40 backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-[#007aff]/50 focus:border-[#007aff] transition-all duration-200 resize-none"
+                className="w-full rounded-[14px] border border-[#e5e5ea] bg-white px-4 py-3 text-[15px] text-[#1d1d1f] placeholder:text-[#6e6e73] focus:outline-none focus:ring-2 focus:ring-[#007aff]/30 focus:border-[#007aff] transition-all duration-200 resize-none"
                 placeholder="Any additional details..." />
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -154,22 +154,22 @@ function ConditionCard({ condition: c, onEdit, onDelete }: { condition: Conditio
     <Card className="apple-card overflow-hidden">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0 mt-0.5 ${c.is_chronic ? "bg-[#fef0d9] text-[#ff9f0a]" : "bg-[#f5f5f7] text-white/60"}`}>
+          <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0 mt-0.5 ${c.is_chronic ? "bg-[#fef0d9] text-[#ff9f0a]" : "bg-[#f5f5f7] text-[#6e6e73]"}`}>
             <Stethoscope className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="text-[15px] font-semibold text-white">{c.name}</p>
+              <p className="text-[15px] font-semibold text-[#1d1d1f]">{c.name}</p>
               {c.is_chronic && <Badge variant="warning" className="text-[10px] px-1.5 py-0 h-4">Chronic</Badge>}
             </div>
             {c.diagnosis_date && (
-              <p className="text-[13px] text-white/60 mt-0.5">Diagnosed {new Date(c.diagnosis_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}</p>
+              <p className="text-[13px] text-[#6e6e73] mt-0.5">Diagnosed {new Date(c.diagnosis_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}</p>
             )}
-            {c.notes && <p className="text-[12px] text-white/60 mt-1">{c.notes}</p>}
+            {c.notes && <p className="text-[12px] text-[#6e6e73] mt-1">{c.notes}</p>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <button onClick={() => onEdit(c)} className="p-2 rounded-full hover:bg-[#f5f5f7] transition-colors" title="Edit">
-              <Pencil className="w-4 h-4 text-white/60" />
+              <Pencil className="w-4 h-4 text-[#6e6e73]" />
             </button>
             <button onClick={() => onDelete(c.id)} className="p-2 rounded-full hover:bg-[#ff3b30]/10 transition-colors" title="Delete">
               <Trash2 className="w-4 h-4 text-[#ff3b30]" />

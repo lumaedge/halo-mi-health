@@ -160,8 +160,8 @@ export default function NewConsultation() {
 
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-white">What are you experiencing?</h2>
-          <p className="text-[13px] text-white/60">Tap common symptoms or type your own</p>
+          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">What are you experiencing?</h2>
+          <p className="text-[13px] text-[#6e6e73]">Tap common symptoms or type your own</p>
 
           <div className="flex flex-wrap gap-2">
             {symptoms.map(s => (
@@ -169,7 +169,7 @@ export default function NewConsultation() {
                 key={s.id}
                 variant={s.selected ? "default" : "secondary"}
                 className={`cursor-pointer text-[13px] px-3 py-1.5 transition-all ${
-                  s.selected ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-white/60 hover:bg-[#e5e5ea]"
+                  s.selected ? "bg-[#007aff] text-white" : "bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e5e5ea]"
                 }`}
                 onClick={() => toggleSymptom(s.id)}
               >
@@ -196,25 +196,25 @@ export default function NewConsultation() {
 
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-white">Details</h2>
+          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Details</h2>
 
           <div className="space-y-1.5">
-            <Label className="text-[13px] text-white/60">Describe your symptoms</Label>
+            <Label className="text-[13px] text-[#6e6e73]">Describe your symptoms</Label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="When did it start? What makes it better or worse? Any other relevant information..."
-                className="w-full rounded-[12px] border border-white/10 bg-white/10 px-3 py-2.5 text-[14px] text-white placeholder:text-white/40 backdrop-blur-xl focus:outline-none focus:ring-1 focus:ring-[#007aff] min-h-[100px] resize-y"
+              className="w-full rounded-[12px] border border-[#e5e5ea] bg-white px-3 py-2.5 text-[14px] text-[#1d1d1f] placeholder:text-[#c7c7cc] focus:outline-none focus:ring-1 focus:ring-[#007aff] min-h-[100px] resize-y"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-[13px] text-white/60">Duration</Label>
+              <Label className="text-[13px] text-[#6e6e73]">Duration</Label>
               <Input value={duration} onChange={e => setDuration(e.target.value)} placeholder="e.g. 2 days" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[13px] text-white/60">Severity</Label>
+              <Label className="text-[13px] text-[#6e6e73]">Severity</Label>
               <div className="flex gap-1.5">
                 {(["mild", "moderate", "severe"] as const).map(s => (
                   <Button
@@ -239,8 +239,8 @@ export default function NewConsultation() {
 
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-white">Add Media</h2>
-          <p className="text-[13px] text-white/60">Photos or videos of visible symptoms</p>
+          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Add Media</h2>
+          <p className="text-[13px] text-[#6e6e73]">Photos or videos of visible symptoms</p>
 
           <input
             ref={fileInputRef}
@@ -314,10 +314,10 @@ export default function NewConsultation() {
             </div>
 
             <div>
-              <h3 className="text-[15px] font-semibold text-white mb-2">Possible causes</h3>
+              <h3 className="text-[15px] font-semibold text-[#1d1d1f] mb-2">Possible causes</h3>
               <ul className="space-y-1">
                 {aiAdvice.possibleConditions.map((c, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[14px] text-white/60">
+                  <li key={i} className="flex items-start gap-2 text-[14px] text-[#6e6e73]">
                     <ChevronRight className="w-[14px] h-[14px] text-[#007aff] mt-0.5 flex-shrink-0" />
                     {c}
                   </li>
@@ -326,14 +326,14 @@ export default function NewConsultation() {
             </div>
 
             <div>
-              <h3 className="text-[15px] font-semibold text-white mb-1">Recommendation</h3>
-              <p className="text-[14px] text-white/60 leading-relaxed">{aiAdvice.recommendation}</p>
+              <h3 className="text-[15px] font-semibold text-[#1d1d1f] mb-1">Recommendation</h3>
+              <p className="text-[14px] text-[#6e6e73] leading-relaxed">{aiAdvice.recommendation}</p>
             </div>
 
             {aiAdvice.suggestedMedication && (
               <div className="rounded-[12px] bg-[#f5f5f7] p-3">
-                <p className="text-[13px] text-white/60 font-medium">Suggested medication</p>
-                <p className="text-[14px] text-white">{aiAdvice.suggestedMedication}</p>
+                <p className="text-[13px] text-[#6e6e73] font-medium">Suggested medication</p>
+                <p className="text-[14px] text-[#1d1d1f]">{aiAdvice.suggestedMedication}</p>
               </div>
             )}
 
@@ -352,7 +352,7 @@ export default function NewConsultation() {
               )}
             </div>
 
-            <p className="text-[11px] text-white/60 italic">{aiAdvice.disclaimer}</p>
+            <p className="text-[11px] text-[#6e6e73] italic">{aiAdvice.disclaimer}</p>
           </CardContent>
         </Card>
       )}

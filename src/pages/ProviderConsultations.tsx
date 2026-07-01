@@ -5,7 +5,7 @@ export default function ProviderConsultations() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-[32px] font-bold text-white tracking-tight">Consultations</h1>
+        <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Consultations</h1>
         <p className="text-[16px] text-[#6e6e73] mt-1">Manage patient consultations</p>
       </div>
       <Card>
@@ -15,7 +15,7 @@ export default function ProviderConsultations() {
               <Camera className="w-[22px] h-[22px] text-[#007aff]" />
             </div>
             <div>
-              <h3 className="text-[17px] font-semibold text-white">Handwritten Notes</h3>
+              <h3 className="text-[17px] font-semibold text-[#1d1d1f]">Handwritten Notes</h3>
               <p className="text-[14px] text-[#6e6e73] mt-0.5">Patients upload photos via the app. Review and approve them here.</p>
             </div>
           </div>
@@ -25,7 +25,7 @@ export default function ProviderConsultations() {
         <div className="w-[56px] h-[56px] rounded-[16px] bg-[#f5f5f7] flex items-center justify-center mx-auto mb-4">
           <Calendar className="w-[28px] h-[28px] text-[#6e6e73]" />
         </div>
-        <p className="text-[16px] font-medium text-white">No upcoming consultations</p>
+        <p className="text-[16px] font-medium text-[#1d1d1f]">No upcoming consultations</p>
       </div>
     </div>
   )

@@ -121,7 +121,7 @@ const categoryColors: Record<string, string> = {
   screening: "bg-[#fef0d9] text-[#ff9f0a]",
   cancer: "bg-[#fce8e6] text-[#ff3b30]",
   genetic: "bg-[#f0e6ff] text-[#5856d6]",
-  annual: "bg-[#f5f5f7] text-white/60",
+  annual: "bg-[#f5f5f7] text-[#6e6e73]",
 }
 
 const categoryLabels: Record<string, string> = {
@@ -184,8 +184,8 @@ export default function HealthChecks() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-[32px] font-bold text-white tracking-tight">Health Checks</h1>
-        <p className="text-[16px] text-white/60 mt-1">Age-appropriate screenings & immunisations</p>
+        <h1 className="text-[32px] font-bold text-[#1d1d1f] tracking-tight">Health Checks</h1>
+        <p className="text-[16px] text-[#6e6e73] mt-1">Age-appropriate screenings & immunisations</p>
       </div>
 
       {hasChronic ? (
@@ -196,15 +196,15 @@ export default function HealthChecks() {
                 <AlertCircle className="w-[20px] h-[20px] text-[#ff9f0a]" />
               </div>
               <div>
-                <h2 className="text-[17px] font-semibold text-white">Chronic Conditions Detected</h2>
-                <p className="text-[14px] text-white/60 mt-1">
+                <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Chronic Conditions Detected</h2>
+                <p className="text-[14px] text-[#6e6e73] mt-1">
                   You have {conditions.filter(c => c.is_chronic).length} chronic condition(s) registered.
                 </p>
                 <div className="mt-3 space-y-1.5">
                   {conditions.filter(c => c.is_chronic).map(c => (
                     <div key={c.id} className="flex items-center gap-2 text-[14px]">
                       <Badge variant="warning" className="h-[20px] px-1.5 text-[11px]">Chronic</Badge>
-                      <span className="text-white">{c.name}</span>
+                      <span className="text-[#1d1d1f]">{c.name}</span>
                     </div>
                   ))}
                 </div>
@@ -234,8 +234,8 @@ export default function HealthChecks() {
                 <Check className="w-[20px] h-[20px] text-[#34c759]" />
               </div>
               <div>
-                <h2 className="text-[17px] font-semibold text-white">No Chronic Conditions</h2>
-                <p className="text-[14px] text-white/60 mt-1">
+                <h2 className="text-[17px] font-semibold text-[#1d1d1f]">No Chronic Conditions</h2>
+                <p className="text-[14px] text-[#6e6e73] mt-1">
                   Great news! No chronic conditions recorded. Keep up with your annual health checks below.
                 </p>
               </div>
@@ -249,12 +249,12 @@ export default function HealthChecks() {
           <group.icon className="w-[22px] h-[22px] text-[#007aff]" />
         </div>
         <div className="flex-1">
-          <p className="text-[15px] font-semibold text-white">{group.label}</p>
-          <p className="text-[13px] text-white/60">{group.range}</p>
+          <p className="text-[15px] font-semibold text-[#1d1d1f]">{group.label}</p>
+          <p className="text-[13px] text-[#6e6e73]">{group.range}</p>
         </div>
         <div className="text-right">
           <p className="text-[22px] font-bold text-[#007aff]">{doneChecks}/{totalChecks}</p>
-          <p className="text-[11px] text-white/60">completed</p>
+          <p className="text-[11px] text-[#6e6e73]">completed</p>
         </div>
       </div>
 
@@ -277,7 +277,7 @@ export default function HealthChecks() {
                     {done && <Check className="w-[12px] h-[12px] text-white" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-[14px] font-medium ${done ? 'text-white/60 line-through' : 'text-white'}`}>
+                    <p className={`text-[14px] font-medium ${done ? 'text-[#6e6e73] line-through' : 'text-[#1d1d1f]'}`}>
                       {check.label}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
@@ -285,7 +285,7 @@ export default function HealthChecks() {
                         {categoryLabels[check.category]}
                       </Badge>
                       {check.dueAge && (
-                        <span className="text-[11px] text-white/60">Due: {check.dueAge}</span>
+                        <span className="text-[11px] text-[#6e6e73]">Due: {check.dueAge}</span>
                       )}
                     </div>
                   </div>
