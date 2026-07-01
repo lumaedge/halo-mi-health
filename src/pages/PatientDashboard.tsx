@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload } from "lucide-react"
+import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload, Sparkles } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
 
@@ -87,6 +87,22 @@ export default function PatientDashboard() {
           Your health records are secure and available whenever you need them.
         </p>
       </div>
+
+      <Link to="/new-consultation"
+        className="block rounded-[20px] p-5 bg-gradient-to-br from-[#007aff] to-[#5856d6] text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[16px] bg-white/20 flex items-center justify-center shrink-0">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[17px] font-semibold">AI Symptom Check</p>
+            <p className="text-[14px] text-white/80">Describe your symptoms for an instant AI triage assessment</p>
+          </div>
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+        </div>
+      </Link>
 
       <div className="grid md:grid-cols-2 gap-4 animate-stagger">
         <Card className="hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300">
