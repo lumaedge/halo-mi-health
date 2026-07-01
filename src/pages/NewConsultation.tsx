@@ -5,56 +5,39 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Mic, Camera, Upload, Send, Loader2, ChevronRight, X, Plus, FileText, Brain, Calendar, Phone, Stethoscope, AlertTriangle } from "lucide-react"
+import { Sparkles, Mic, Camera, Upload, Send, Loader2, ChevronRight, X, Plus, FileText, Brain, Calendar, Phone, Stethoscope, AlertTriangle, MessageCircle, ChevronDown } from "lucide-react"
 import { toast } from "sonner"
-
-interface Symptom {
-  id: string
-  label: string
-  selected: boolean
-}
-
-const commonSymptoms: Symptom[] = [
-  { id: "headache", label: "Headache", selected: false },
-  { id: "fever", label: "Fever", selected: false },
-  { id: "cough", label: "Cough", selected: false },
-  { id: "fatigue", label: "Fatigue", selected: false },
-  { id: "sore-throat", label: "Sore throat", selected: false },
-  { id: "body-ache", label: "Body ache", selected: false },
-  { id: "nausea", label: "Nausea", selected: false },
-  { id: "dizziness", label: "Dizziness", selected: false },
-  { id: "chest-pain", label: "Chest pain", selected: false },
-  { id: "shortness-breath", label: "Shortness of breath", selected: false },
-  { id: "abdominal-pain", label: "Abdominal pain", selected: false },
-  { id: "rash", label: "Skin rash", selected: false },
-  { id: "ear-pain", label: "Ear pain", selected: false },
-  { id: "eye-irritation", label: "Eye irritation", selected: false },
-  { id: "back-pain", label: "Back pain", selected: false },
-  { id: "joint-pain", label: "Joint pain", selected: false },
-]
-
-interface AiAdvice {
-  possibleConditions: string[]
-  recommendation: string
-  urgency: "self-care" | "appointment" | "urgent" | "emergency"
-  suggestedMedication?: string
-  disclaimer: string
-}
+import { commonSymptomsList, getSymptomInfo, getFollowUps, evaluateTriage, type TriageResult, type FollowUpQuestion, type FollowUpAnswer } from "@/lib/triage-engine"
 
 export default function NewConsultation() {
   const { user } = useAuth()
-  const [symptoms, setSymptoms] = useState<Symptom[]>(commonSymptoms)
+  const [symptoms, setSymptoms] = useState(commonSymptomsList.map(s => ({ ...s, selected: false })))
   const [customSymptom, setCustomSymptom] = useState("")
   const [description, setDescription] = useState("")
   const [duration, setDuration] = useState("")
   const [severity, setSeverity] = useState<"mild" | "moderate" | "severe" | null>(null)
   const [mediaFiles, setMediaFiles] = useState<string[]>([])
-  const [aiAdvice, setAiAdvice] = useState<AiAdvice | null>(null)
+  const [aiAdvice, setAiAdvice] = useState<TriageResult | null>(null)
   const [loadingAi, setLoadingAi] = useState(false)
+  const [followUpQuestions, setFollowUpQuestions] = useState<FollowUpQuestion[]>([])
+  const [followUpAnswers, setFollowUpAnswers] = useState<FollowUpAnswer[]>([])
+  const [showFollowUp, setShowFollowUp] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function toggleSymptom(id: string) {
-    setSymptoms(prev => prev.map(s => s.id === id ? { ...s, selected: !s.selected } : s))
+    const next = symptoms.map(s => s.id === id ? { ...s, selected: !s.selected } : s)
+    setSymptoms(next)
+    const selectedIds = next.filter(s => s.selected).map(s => s.id)
+    if (selectedIds.length > 0) {
+      const qs = getFollowUps(selectedIds)
+      setFollowUpQuestions(qs)
+      setFollowUpAnswers(prev => prev.filter(a => qs.some(q => q.id === a.questionId)))
+      if (!showFollowUp) setShowFollowUp(true)
+    } else {
+      setShowFollowUp(false)
+      setFollowUpQuestions([])
+      setFollowUpAnswers([])
+    }
   }
 
   function addCustomSymptom() {
@@ -77,65 +60,44 @@ export default function NewConsultation() {
     toast.success(`${files.length} file(s) added`)
   }
 
+  function setFollowUpAnswer(questionId: string, answer: string) {
+    setFollowUpAnswers(prev => {
+      const existing = prev.findIndex(a => a.questionId === questionId)
+      if (existing >= 0) {
+        const next = [...prev]
+        next[existing] = { questionId, answer }
+        return next
+      }
+      return [...prev, { questionId, answer }]
+    })
+  }
+
   function getAiAdvice() {
-    const selectedSymptoms = symptoms.filter(s => s.selected).map(s => s.label)
+    const selectedSymptoms = symptoms.filter(s => s.selected)
     if (selectedSymptoms.length === 0 && !description.trim()) {
       toast.error("Please select or describe your symptoms first")
       return
     }
-    setLoadingAi(true)
+    if (!severity) {
+      toast.error("Please select the severity of your symptoms")
+      return
+    }
 
-    const allSymptoms = [...selectedSymptoms, description].filter(Boolean).join(", ")
+    setLoadingAi(true)
+    setAiAdvice(null)
 
     setTimeout(() => {
-      const hasFever = allSymptoms.toLowerCase().includes("fever")
-      const hasChestPain = allSymptoms.toLowerCase().includes("chest")
-      const hasBreath = allSymptoms.toLowerCase().includes("breath")
-      const hasHeadache = allSymptoms.toLowerCase().includes("headache")
-      const hasPain = allSymptoms.toLowerCase().includes("pain")
-      const hasRash = allSymptoms.toLowerCase().includes("rash")
-      const hasCough = allSymptoms.toLowerCase().includes("cough")
-      const hasNausea = allSymptoms.toLowerCase().includes("nausea")
-
-      let urgency: AiAdvice["urgency"] = "self-care"
-      let possibleConditions: string[] = ["Common cold (viral upper respiratory infection)"]
-      let recommendation = "Rest, stay hydrated, and monitor your symptoms. Over-the-counter pain relief may help."
-
-      if (hasChestPain || hasBreath) {
-        urgency = "emergency"
-        possibleConditions = ["Possible cardiac event", "Pulmonary embolism", "Severe asthma attack"]
-        recommendation = "This could be a medical emergency. Please call emergency services (10177) or go to the nearest emergency room immediately."
-      } else if (hasFever && severity === "severe") {
-        urgency = "urgent"
-        possibleConditions = ["Severe bacterial infection", "Influenza", "COVID-19"]
-        recommendation = "Please consult a healthcare provider within 24 hours. You may need diagnostic tests."
-      } else if (hasPain && severity === "severe") {
-        urgency = "appointment"
-        possibleConditions = ["Musculoskeletal injury", "Migraine", "Inflammatory condition"]
-        recommendation = "Schedule an appointment with your primary care provider within 2-3 days."
-      } else if (hasRash) {
-        urgency = "appointment"
-        possibleConditions = ["Allergic reaction", "Contact dermatitis", "Eczema flare-up"]
-        recommendation = "Apply cool compresses and avoid irritants. Schedule an appointment if it persists."
-      } else if (hasCough && hasFever) {
-        urgency = "appointment"
-        possibleConditions = ["Bronchitis", "Influenza", "COVID-19", "Pneumonia"]
-        recommendation = "Monitor your temperature. Book an appointment for evaluation if symptoms persist beyond 3 days."
-      } else {
-        urgency = "self-care"
-        possibleConditions = ["Viral infection (common cold)", "Tension headache", "Mild allergy", "Stress-related symptoms"]
-        recommendation = "Rest, stay hydrated, and monitor your symptoms. Over-the-counter pain relief may help. If symptoms persist for more than 7 days, consult a provider."
-      }
-
-      setAiAdvice({
-        possibleConditions,
-        recommendation,
-        urgency,
-        suggestedMedication: urgency === "self-care" ? "Paracetamol or Ibuprofen (follow package instructions)" : undefined,
-        disclaimer: "This is an AI-generated assessment for informational purposes only. It does not constitute a medical diagnosis. Always consult a qualified healthcare professional for medical advice.",
+      const result = evaluateTriage({
+        symptomIds: selectedSymptoms.map(s => s.id).filter(id => !id.startsWith("custom-")),
+        customSymptoms: selectedSymptoms.filter(s => s.id.startsWith("custom-")).map(s => s.label),
+        description,
+        duration,
+        severity,
+        followUpAnswers,
       })
+      setAiAdvice(result)
       setLoadingAi(false)
-    }, 1500)
+    }, 1200)
   }
 
   const selectedCount = symptoms.filter(s => s.selected).length
@@ -144,11 +106,11 @@ export default function NewConsultation() {
     "self-care": { bg: "bg-[#e8f5e9]", text: "text-[#34c759]", label: "Self-care recommended" },
     "appointment": { bg: "bg-[#fef0d9]", text: "text-[#ff9f0a]", label: "Book an appointment" },
     "urgent": { bg: "bg-[#fce8e6]", text: "text-[#ff3b30]", label: "Urgent care needed" },
-    "emergency": { bg: "bg-[#ff3b30]/10", text: "text-[#ff3b30]", label: "EMERGENCY - Call 10177" },
+    "emergency": { bg: "bg-[#ff3b30]/10", text: "text-[#ff3b30]", label: "EMERGENCY — Call 10177" },
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-8">
+    <div className="space-y-4 animate-fade-in pb-8">
       <div className="rounded-[24px] p-6 bg-gradient-to-br from-[#5856d6] to-[#007aff] text-white">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-[18px] h-[18px]" />
@@ -160,7 +122,10 @@ export default function NewConsultation() {
 
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">What are you experiencing?</h2>
+          <div className="flex items-center gap-3">
+            <div className="w-[28px] h-[28px] rounded-[8px] bg-[#007aff] flex items-center justify-center text-white text-[12px] font-bold">1</div>
+            <h2 className="text-[17px] font-semibold text-[#1d1d1f]">What are you experiencing?</h2>
+          </div>
           <p className="text-[13px] text-[#6e6e73]">Tap common symptoms or type your own</p>
 
           <div className="flex flex-wrap gap-2">
@@ -194,9 +159,49 @@ export default function NewConsultation() {
         </CardContent>
       </Card>
 
+      {followUpQuestions.length > 0 && (
+        <Card>
+          <CardContent className="p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-[28px] h-[28px] rounded-[8px] bg-[#5856d6] flex items-center justify-center text-white text-[12px] font-bold">2</div>
+              <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Help us understand better</h2>
+            </div>
+            <div className="space-y-4">
+              {followUpQuestions.map(q => (
+                <div key={q.id} className="space-y-2">
+                  <p className="text-[14px] font-medium text-[#1d1d1f]">{q.question}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {q.options.map(opt => {
+                      const isSelected = followUpAnswers.some(a => a.questionId === q.id && a.answer === opt)
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => setFollowUpAnswer(q.id, opt)}
+                          className={`px-3 py-1.5 rounded-[10px] text-[13px] font-medium transition-all ${
+                            isSelected
+                              ? "bg-[#5856d6] text-white"
+                              : "bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e5e5ea]"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Details</h2>
+          <div className="flex items-center gap-3">
+            <div className="w-[28px] h-[28px] rounded-[8px] bg-[#ff9f0a] flex items-center justify-center text-white text-[12px] font-bold">{followUpQuestions.length > 0 ? "3" : "2"}</div>
+            <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Details</h2>
+          </div>
 
           <div className="space-y-1.5">
             <Label className="text-[13px] text-[#6e6e73]">Describe your symptoms</Label>
@@ -239,7 +244,10 @@ export default function NewConsultation() {
 
       <Card>
         <CardContent className="p-5 space-y-4">
-          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Add Media</h2>
+          <div className="flex items-center gap-3">
+            <div className="w-[28px] h-[28px] rounded-[8px] bg-[#34c759] flex items-center justify-center text-white text-[12px] font-bold">{followUpQuestions.length > 0 ? "4" : "3"}</div>
+            <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Add Media</h2>
+          </div>
           <p className="text-[13px] text-[#6e6e73]">Photos or videos of visible symptoms</p>
 
           <input
@@ -330,12 +338,24 @@ export default function NewConsultation() {
               <p className="text-[14px] text-[#6e6e73] leading-relaxed">{aiAdvice.recommendation}</p>
             </div>
 
+            {aiAdvice.urgency === "self-care" && aiAdvice.selfCare && (
+              <div className="rounded-[12px] bg-[#e8f5e9] p-3">
+                <p className="text-[13px] text-[#34c759] font-medium mb-1">Self-care tips</p>
+                <p className="text-[14px] text-[#1d1d1f]">{aiAdvice.selfCare}</p>
+              </div>
+            )}
+
             {aiAdvice.suggestedMedication && (
               <div className="rounded-[12px] bg-[#f5f5f7] p-3">
                 <p className="text-[13px] text-[#6e6e73] font-medium">Suggested medication</p>
                 <p className="text-[14px] text-[#1d1d1f]">{aiAdvice.suggestedMedication}</p>
               </div>
             )}
+
+            <div>
+              <h3 className="text-[15px] font-semibold text-[#1d1d1f] mb-1">When to worry</h3>
+              <p className="text-[14px] text-[#6e6e73] leading-relaxed">{aiAdvice.whenToWorry}</p>
+            </div>
 
             <div className="flex gap-2">
               {aiAdvice.urgency === "emergency" && (
@@ -350,6 +370,18 @@ export default function NewConsultation() {
                   Book Appointment
                 </Button>
               )}
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={() => {
+                  const text = `Halo Mi Health Assessment\n\nUrgency: ${urgencyColors[aiAdvice.urgency].label}\n\nPossible causes:\n- ${aiAdvice.possibleConditions.join("\n- ")}\n\nRecommendation:\n${aiAdvice.recommendation}`
+                  navigator.clipboard.writeText(text)
+                  toast.success("Assessment copied to clipboard")
+                }}
+              >
+                <FileText className="w-[16px] h-[16px]" />
+                Copy
+              </Button>
             </div>
 
             <p className="text-[11px] text-[#6e6e73] italic">{aiAdvice.disclaimer}</p>
