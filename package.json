@@ -9,8 +9,7 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "icons": "node scripts/generate-icons.js",
-    "start": "node server.mjs"
+    "icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.13",
@@ -35,7 +34,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "express": "^5.2.1",
     "lucide-react": "^1.17.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
