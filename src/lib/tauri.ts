@@ -1,5 +1,3 @@
-import { invoke } from "@tauri-apps/api/core"
-
 export interface UploadResult {
   success: boolean
   record_id?: string
@@ -33,17 +31,34 @@ export interface ProfileData {
   email: string
 }
 
+export function isTauri(): boolean {
+  return typeof window !== "undefined" && "__TAURI__" in window
+}
+
+async function getInvoke() {
+  try {
+    const mod = await import("@tauri-apps/api/core")
+    return mod.invoke
+  } catch {
+    return null
+  }
+}
+
 export async function tauriUpsertProfile(
   userId: string,
   email: string,
   fullName: string
 ): Promise<{ profile?: ProfileData; error?: string }> {
+  const invoke = await getInvoke()
+  if (!invoke) return { error: "Not available in browser mode" }
   return invoke("upsert_profile", { userId, email, fullName })
 }
 
 export async function tauriGetPatientRecords(
   userId: string
 ): Promise<{ records: MedicalRecordData[]; error?: string }> {
+  const invoke = await getInvoke()
+  if (!invoke) return { records: [], error: "Not available in browser mode" }
   return invoke("get_patient_records", { userId })
 }
 
@@ -58,6 +73,8 @@ export async function tauriUploadHandwrittenNote(
   description: string,
   recordType: string
 ): Promise<UploadResult> {
+  const invoke = await getInvoke()
+  if (!invoke) return { success: false, error: "Not available in browser mode" }
   return invoke("upload_handwritten_note", {
     userId,
     userEmail,
@@ -74,5 +91,7 @@ export async function tauriUploadHandwrittenNote(
 export async function tauriGetRecordImage(
   path: string
 ): Promise<{ data?: string; mime_type?: string; error?: string }> {
+  const invoke = await getInvoke()
+  if (!invoke) return { error: "Not available in browser mode" }
   return invoke("get_record_image", { path })
 }

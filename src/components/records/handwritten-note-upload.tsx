@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { UploadDropzone } from "@/components/ui/upload-dropzone"
 import { Upload, Loader2, CheckCircle, AlertCircle } from "lucide-react"
 import { useAuth } from "@/App"
-import { tauriUploadHandwrittenNote } from "@/lib/tauri"
+import { tauriUploadHandwrittenNote, isTauri } from "@/lib/tauri"
 import type { RecordType } from "@/types"
 
 const recordTypes: { value: RecordType; label: string }[] = [
@@ -73,15 +73,26 @@ export function HandwrittenNoteUpload({ open, onOpenChange, onSuccess }: Handwri
     }
   }
 
+  const inTauri = isTauri()
+
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) resetState(); onOpenChange(o) }}>
       <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[20px]">Upload Handwritten Note</DialogTitle>
           <DialogDescription className="text-[14px] text-[#6e6e73]">
-            Take a photo of the handwritten note your doctor gave you.
+            {inTauri ? "Take a photo of the handwritten note your doctor gave you." : "This feature is only available in the mobile app."}
           </DialogDescription>
         </DialogHeader>
+        {!inTauri && (
+          <div className="flex flex-col items-center gap-4 py-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-[#f5f5f7] flex items-center justify-center">
+              <AlertCircle className="w-6 h-6 text-[#6e6e73]" />
+            </div>
+            <p className="text-[15px] text-[#6e6e73]">Download the Halo Mi Health app to upload handwritten notes directly from your phone.</p>
+          </div>
+        )}
+        {inTauri && (
 
         <div className="space-y-5">
           <UploadDropzone
@@ -168,6 +179,7 @@ export function HandwrittenNoteUpload({ open, onOpenChange, onSuccess }: Handwri
             </Button>
           </div>
         </div>
+        )}
       </DialogContent>
     </Dialog>
   )
