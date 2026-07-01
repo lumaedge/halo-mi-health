@@ -88,12 +88,17 @@ const tabNav = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/vault", label: "Records", icon: Shield },
   { href: "/conditions", label: "Conditions", icon: HeartPulse },
-  { href: "/timeline", label: "Timeline", icon: Clock },
   { href: "/medications", label: "Medications", icon: Pill },
   { href: "/profile", label: "Profile", icon: User },
 ]
 
 const extraNav = [
+  {
+    section: "Activity",
+    items: [
+      { href: "/timeline", label: "Timeline", icon: Clock },
+    ],
+  },
   {
     section: "Health",
     items: [
