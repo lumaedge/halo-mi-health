@@ -8,6 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { User, Mail, Heart, Ruler, Weight, Droplets, Scale, Pencil, Save, X, Activity, Smartphone, MapPin, Phone, Calendar } from "lucide-react"
 import { toast } from "sonner"
+import { DataExport } from "@/components/shared/DataExport"
+import { BiometricAuth } from "@/components/shared/BiometricAuth"
+import { PushNotifications } from "@/components/shared/PushNotifications"
+import { HealthSync } from "@/components/shared/HealthSync"
+import { OcrCapture } from "@/components/shared/OcrCapture"
+import { useI18n } from "@/lib/i18n/I18nProvider"
 import type { Profile as ProfileType } from "@/types"
 
 export default function Profile() {
@@ -271,6 +277,20 @@ export default function Profile() {
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {!editing && (
+        <div className="space-y-4 pt-2">
+          <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Features</h2>
+          <BiometricAuth />
+          <PushNotifications />
+          <DataExport />
+          <HealthSync />
+          <OcrCapture onTextExtracted={(text) => {
+            navigator.clipboard?.writeText(text)
+            toast.success("Text copied to clipboard")
+          }} />
         </div>
       )}
     </div>

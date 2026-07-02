@@ -159,3 +159,36 @@ export interface AuditLog {
   ip_address?: string
   created_at: string
 }
+
+export interface HealthScore {
+  id: string
+  user_id: string
+  score: number
+  bmi_score?: number
+  activity_score?: number
+  sleep_score?: number
+  heart_rate_score?: number
+  factors?: Record<string, unknown>
+  calculated_at: string
+  created_at: string
+}
+
+export interface Message {
+  id: string
+  sender_id: string
+  receiver_id: string
+  content: string
+  is_read: boolean
+  created_at: string
+}
+
+export interface HealthSyncData {
+  id: string
+  user_id: string
+  source: "apple_health" | "google_fit" | "manual"
+  data_type: string
+  value: number
+  unit: string
+  recorded_at: string
+  created_at: string
+}

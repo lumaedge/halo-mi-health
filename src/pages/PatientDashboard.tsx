@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload, Sparkles, Moon, Sun } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
+import { HealthScoreCard } from "@/components/shared/HealthScoreCard"
+import { calculateAndSaveHealthScore } from "@/lib/calculateHealthScore"
 
 const calmingQuotes = [
   "Take a deep breath. You're doing great.",
@@ -72,6 +74,7 @@ export default function PatientDashboard() {
         .limit(3)
       setActiveMeds(meds ?? [])
 
+      calculateAndSaveHealthScore(profile.id)
       setLoading(false)
     }
     load()
@@ -207,6 +210,8 @@ export default function PatientDashboard() {
         </div>
       </Link>
       </div>
+
+      <HealthScoreCard />
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 animate-stagger">
         <Card className="hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300">

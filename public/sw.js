@@ -1,17 +1,49 @@
-const CACHE = "halo-mi-health-v1"
+const CACHE = "halo-cache-v1"
+const STATIC_ASSETS = [
+  "/",
+  "/index.html",
+]
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE))
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => {
+      return cache.addAll(STATIC_ASSETS)
+    })
+  )
+  self.skipWaiting()
+})
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))
+      )
+    })
+  )
+  self.clients.claim()
 })
 
 self.addEventListener("fetch", (event) => {
+  const { request } = event
+  const url = new URL(request.url)
+
+  // Only cache same-origin GET requests
+  if (request.method !== "GET" || url.origin !== location.origin) return
+
+  // Don't cache Supabase API calls
+  if (url.hostname.includes("supabase")) return
+
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        const clone = response.clone()
-        caches.open(CACHE).then((cache) => cache.put(event.request, clone))
+    caches.match(request).then((cached) => {
+      const fetchPromise = fetch(request).then((response) => {
+        if (response.ok) {
+          const clone = response.clone()
+          caches.open(CACHE).then((cache) => cache.put(request, clone))
+        }
         return response
-      })
-      .catch(() => caches.match(event.request))
+      }).catch(() => cached)
+      return cached || fetchPromise
+    })
   )
 })

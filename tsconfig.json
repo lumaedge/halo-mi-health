@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/main.tsx", "src/App.tsx", "src/index.css", "src/pages", "src/components", "src/lib", "src/types", "src/vite-env.d.ts"],
+  "include": ["src/main.tsx", "src/App.tsx", "src/index.css", "src/pages", "src/components", "src/lib", "src/types", "src/vite-env.d.ts", "src/*.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

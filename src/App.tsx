@@ -5,7 +5,10 @@ import { supabase } from "@/lib/supabase"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, ClipboardList, Sparkles, Bell, HeartPulse, ChevronUp } from "lucide-react"
+import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, ClipboardList, Sparkles, Bell, HeartPulse, ChevronUp, MessageCircle } from "lucide-react"
+import { I18nProvider, useI18n } from "@/lib/i18n/I18nProvider"
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
+import { OnboardingWizard } from "@/components/shared/OnboardingWizard"
 
 const Login = lazy(() => import("@/pages/Login"))
 const Register = lazy(() => import("@/pages/Register"))
@@ -24,6 +27,7 @@ const ProviderRecords = lazy(() => import("@/pages/ProviderRecords"))
 const ProviderConsultations = lazy(() => import("@/pages/ProviderConsultations"))
 const ProviderPatients = lazy(() => import("@/pages/ProviderPatients"))
 const ProviderSchedule = lazy(() => import("@/pages/ProviderSchedule"))
+const Messages = lazy(() => import("@/pages/Messages"))
 
 interface AuthContext {
   user: SupabaseUser | null
@@ -79,45 +83,59 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const location = useLocation()
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" /></div>
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true)
+
+  useEffect(() => {
+    if (!user) return
+    supabase.from("profiles").select("onboarding_completed").eq("user_id", user.id).single().then(({ data }) => {
+      if (data && !data.onboarding_completed) setShowOnboarding(true)
+      setCheckingOnboarding(false)
+    })
+  }, [user])
+
+  if (loading || checkingOnboarding) return <div className="min-h-screen flex items-center justify-center"><div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" /></div>
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />
+  if (showOnboarding) return <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
   return <>{children}</>
 }
 
 const tabNav = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/vault", label: "Records", icon: Shield },
-  { href: "/conditions", label: "Conditions", icon: HeartPulse },
-  { href: "/medications", label: "Medications", icon: Pill },
-  { href: "/profile", label: "Profile", icon: User },
+  { href: "/dashboard", labelKey: "navHome", icon: LayoutDashboard },
+  { href: "/vault", labelKey: "navRecords", icon: Shield },
+  { href: "/conditions", labelKey: "navConditions", icon: HeartPulse },
+  { href: "/medications", labelKey: "navMedications", icon: Pill },
+  { href: "/profile", labelKey: "navProfile", icon: User },
 ]
 
 const extraNav = [
   {
-    section: "Activity",
+    sectionKey: "navActivity",
     items: [
-      { href: "/timeline", label: "Timeline", icon: Clock },
+      { href: "/timeline", labelKey: "navTimeline", icon: Clock },
+      { href: "/messages", labelKey: "messages", icon: MessageCircle },
     ],
   },
   {
-    section: "Health",
+    sectionKey: "navHealth",
     items: [
-      { href: "/reminders", label: "Reminders", icon: Bell },
-      { href: "/health-checks", label: "Health Checks", icon: ClipboardList },
-      { href: "/new-consultation", label: "AI Symptom Check", icon: Sparkles },
+      { href: "/reminders", labelKey: "navReminders", icon: Bell },
+      { href: "/health-checks", labelKey: "navHealthChecks", icon: ClipboardList },
+      { href: "/new-consultation", labelKey: "navSymptomCheck", icon: Sparkles },
     ],
   },
   {
-    section: "Safety",
+    sectionKey: "navSafety",
     items: [
-      { href: "/emergency", label: "Emergency Card", icon: AlertTriangle },
-      { href: "/share", label: "Share Records", icon: Share2 },
+      { href: "/emergency", labelKey: "navEmergency", icon: AlertTriangle },
+      { href: "/share", labelKey: "navShare", icon: Share2 },
     ],
   },
 ]
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useAuth()
+  const { t } = useI18n()
   const { pathname } = useLocation()
   const [navExpanded, setNavExpanded] = useState(false)
 
@@ -129,9 +147,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="w-6 h-6 rounded-[6px] bg-[#007aff] flex items-center justify-center">
               <Heart className="w-3 h-3 text-white" fill="white" />
             </div>
-            <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">Halo Mi Health</span>
+            <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">{t("appName")}</span>
           </div>
-          <Button variant="ghost" size="sm" className="text-[#6e6e73] text-[13px] h-[30px] px-2.5" onClick={signOut}>Sign out</Button>
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <Button variant="ghost" size="sm" className="text-[#6e6e73] text-[13px] h-[30px] px-2.5" onClick={signOut}>{t("signOut")}</Button>
+          </div>
         </div>
       </header>
 
@@ -153,15 +174,15 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="fixed bottom-[76px] left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] animate-slide-up max-w-lg mx-auto">
             <div className="px-5 py-4 space-y-5 max-h-[40vh] overflow-y-auto">
               {extraNav.map((section) => (
-                <div key={section.section}>
-                  <p className="text-[11px] uppercase tracking-wider font-semibold text-[#6e6e73] mb-2 px-1">{section.section}</p>
+                <div key={section.sectionKey}>
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-[#6e6e73] mb-2 px-1">{t(section.sectionKey)}</p>
                   <div className="grid grid-cols-3 gap-2">
                     {section.items.map((item) => (
                       <Link key={item.href} to={item.href} onClick={() => setNavExpanded(false)}
                         className={cn("flex flex-col items-center gap-1.5 py-3 px-2 rounded-[14px] transition-all duration-200",
                           pathname === item.href ? "bg-[#007aff]/10 text-[#007aff]" : "text-[#6e6e73] hover:bg-[#f5f5f7]")}>
                         <item.icon className={cn("w-[22px] h-[22px]", pathname === item.href ? "text-[#007aff]" : "text-[#6e6e73]")} />
-                        <span className={cn("text-[10px] font-medium text-center leading-tight", pathname === item.href ? "text-[#007aff]" : "text-[#6e6e73]")}>{item.label}</span>
+                        <span className={cn("text-[10px] font-medium text-center leading-tight", pathname === item.href ? "text-[#007aff]" : "text-[#6e6e73]")}>{t(item.labelKey)}</span>
                       </Link>
                     ))}
                   </div>
@@ -181,14 +202,14 @@ function AppLayout({ children }: { children: React.ReactNode }) {
                 className={cn("flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] transition-all duration-200",
                   isActive ? "bg-[#007aff]/10 text-[#007aff]" : "text-[#6e6e73] hover:bg-[#f5f5f7]")}>
                 <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#007aff] tab-pop" : "text-[#6e6e73]")} />
-                <span className={cn("text-[10px] font-medium whitespace-nowrap", isActive ? "text-[#007aff]" : "text-[#6e6e73]")}>{item.label}</span>
+                <span className={cn("text-[10px] font-medium whitespace-nowrap", isActive ? "text-[#007aff]" : "text-[#6e6e73]")}>{t(item.labelKey)}</span>
               </Link>
             )
           })}
           <button onClick={() => setNavExpanded(!navExpanded)}
             className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] text-[#6e6e73] hover:bg-[#f5f5f7] transition-all duration-200">
             <ChevronUp className={cn("w-[22px] h-[22px] transition-transform duration-300", navExpanded && "rotate-180")} />
-            <span className="text-[10px] font-medium whitespace-nowrap">More</span>
+            <span className="text-[10px] font-medium whitespace-nowrap">{t("navMore")}</span>
           </button>
         </div>
       </nav>
@@ -199,6 +220,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <AuthProvider>
+      <I18nProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
@@ -219,9 +241,11 @@ export default function App() {
           <Route path="/consultations" element={<AuthGuard><AppLayout><ProviderConsultations /></AppLayout></AuthGuard>} />
           <Route path="/patients" element={<AuthGuard><AppLayout><ProviderPatients /></AppLayout></AuthGuard>} />
           <Route path="/schedule" element={<AuthGuard><AppLayout><ProviderSchedule /></AppLayout></AuthGuard>} />
+          <Route path="/messages" element={<AuthGuard><AppLayout><Messages /></AppLayout></AuthGuard>} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" toastOptions={{ style: { borderRadius: "12px", border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}} />
+      </I18nProvider>
     </AuthProvider>
   )
 }
