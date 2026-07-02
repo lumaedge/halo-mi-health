@@ -3,9 +3,19 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload, Sparkles } from "lucide-react"
+import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload, Sparkles, Moon, Sun } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
+
+const calmingQuotes = [
+  "Take a deep breath. You're doing great.",
+  "Small steps lead to big changes.",
+  "Your health journey is yours alone.",
+  "Be kind to yourself today.",
+  "Every day is a fresh start.",
+  "You are stronger than you know.",
+  "Breathe in calm, breathe out worry.",
+]
 
 export default function PatientDashboard() {
   const { profile } = useAuth()
@@ -16,6 +26,13 @@ export default function PatientDashboard() {
   const [recentEvents, setRecentEvents] = useState<any[]>([])
   const [activeMeds, setActiveMeds] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [ambient, setAmbient] = useState(() => localStorage.getItem("halo-ambient") === "true")
+
+  function toggleAmbient() {
+    const next = !ambient
+    setAmbient(next)
+    localStorage.setItem("halo-ambient", String(next))
+  }
 
   useEffect(() => {
     if (!profile) return
@@ -68,6 +85,7 @@ export default function PatientDashboard() {
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
+  const quote = calmingQuotes[new Date().getDate() % calmingQuotes.length]
 
   if (loading) {
     return (
@@ -77,9 +95,74 @@ export default function PatientDashboard() {
     )
   }
 
+  if (ambient) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center text-center px-6 py-12 relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#e8f0fe] via-[#f0e8ff] to-[#fce8e6]">
+        <button
+          onClick={toggleAmbient}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl flex items-center justify-center shadow-sm hover:bg-white/90 transition-all"
+        >
+          <Sun className="w-5 h-5 text-[#ff9f0a]" />
+        </button>
+
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#007aff]/10 to-[#5856d6]/10 flex items-center justify-center mb-6 animate-pulse">
+          <Heart className="w-10 h-10 text-[#007aff]" fill="#007aff" />
+        </div>
+
+        <h1 className="text-[42px] lg:text-[52px] font-bold text-[#1d1d1f] tracking-tight leading-tight">
+          {greeting}, {firstName}.
+        </h1>
+
+        <p className="text-[18px] text-[#6e6e73] mt-4 max-w-md leading-relaxed italic">
+          "{quote}"
+        </p>
+
+        <div className="flex flex-col gap-3 w-full max-w-sm mt-10">
+          <Link
+            to="/new-consultation"
+            className="w-full py-4 px-6 rounded-[20px] bg-gradient-to-br from-[#007aff] to-[#5856d6] text-white text-[18px] font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <span className="flex items-center justify-center gap-2">
+              <Sparkles className="w-5 h-5" /> Check Symptoms
+            </span>
+          </Link>
+
+          <Link
+            to="/emergency"
+            className="w-full py-4 px-6 rounded-[20px] bg-gradient-to-br from-[#ff3b30] to-[#ff6b6b] text-white text-[18px] font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <span className="flex items-center justify-center gap-2">
+              <AlertTriangle className="w-5 h-5" /> Emergency Card
+            </span>
+          </Link>
+
+          <Link
+            to="/medications"
+            className="w-full py-4 px-6 rounded-[20px] bg-white/80 backdrop-blur-xl text-[#1d1d1f] text-[16px] font-medium border border-[#e5e5ea]/60 hover:bg-white hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <span className="flex items-center justify-center gap-2">
+              <Pill className="w-5 h-5 text-[#34c759]" /> My Medications
+            </span>
+          </Link>
+        </div>
+
+        <p className="text-[13px] text-[#6e6e73] mt-8">
+          Tap <Sun className="w-3.5 h-3.5 inline" /> to exit ambient mode
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="rounded-[24px] p-6 lg:p-8 hero-gradient-subtle border border-[#e5e5ea]/30">
+      <div className="rounded-[24px] p-6 lg:p-8 hero-gradient-subtle border border-[#e5e5ea]/30 relative">
+        <button
+          onClick={toggleAmbient}
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/70 backdrop-blur-xl flex items-center justify-center shadow-sm hover:bg-white/90 transition-all"
+          title="Ambient mode"
+        >
+          <Moon className="w-4 h-4 text-[#5856d6]" />
+        </button>
         <h1 className="text-[32px] lg:text-[36px] font-bold text-[#1d1d1f] tracking-tight leading-tight">
           {greeting}, {firstName}.
         </h1>
@@ -88,6 +171,7 @@ export default function PatientDashboard() {
         </p>
       </div>
 
+      <div className="grid lg:grid-cols-2 gap-4">
       <Link to="/new-consultation"
         className="block rounded-[20px] p-5 bg-gradient-to-br from-[#007aff] to-[#5856d6] text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
         <div className="flex items-center gap-4">
@@ -104,7 +188,27 @@ export default function PatientDashboard() {
         </div>
       </Link>
 
-      <div className="grid md:grid-cols-2 gap-4 animate-stagger">
+      <Link
+        to="/emergency"
+        className="block rounded-[20px] p-5 bg-gradient-to-br from-[#ff3b30] to-[#ff6b6b] text-white hover:shadow-lg transition-all duration-300"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-[18px] h-[18px]" />
+              <span className="text-[13px] font-semibold uppercase tracking-wider opacity-80">Emergency</span>
+            </div>
+            <p className="text-[17px] font-semibold mt-2">Emergency Medical Card</p>
+            <p className="text-[14px] text-white/80 mt-0.5">Quick access for first responders</p>
+          </div>
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+            <ArrowRight className="w-5 h-5" />
+          </div>
+        </div>
+      </Link>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 animate-stagger">
         <Card className="hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300">
           <CardContent className="p-5">
             <div className="flex items-start justify-between">
@@ -248,25 +352,6 @@ export default function PatientDashboard() {
           </CardContent>
         </Card>
       )}
-
-      <Link
-        to="/emergency"
-        className="block rounded-[20px] p-5 bg-gradient-to-br from-[#ff3b30] to-[#ff6b6b] text-white hover:shadow-lg transition-all duration-300"
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-[18px] h-[18px]" />
-              <span className="text-[13px] font-semibold uppercase tracking-wider opacity-80">Emergency</span>
-            </div>
-            <p className="text-[17px] font-semibold mt-2">Emergency Medical Card</p>
-            <p className="text-[14px] text-white/80 mt-0.5">Quick access for first responders</p>
-          </div>
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <ArrowRight className="w-5 h-5" />
-          </div>
-        </div>
-      </Link>
     </div>
   )
 }

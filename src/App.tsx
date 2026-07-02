@@ -136,7 +136,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       <main className={cn("transition-all duration-300", navExpanded ? "pb-[200px]" : "pb-[72px]")}>
-        <div className="max-w-lg mx-auto px-4 py-5">
+        <div className="max-w-lg lg:max-w-5xl xl:max-w-6xl mx-auto px-4 py-5">
           <Suspense fallback={
             <div className="flex items-center justify-center h-[50vh]">
               <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
