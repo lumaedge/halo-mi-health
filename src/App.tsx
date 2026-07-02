@@ -135,7 +135,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className={cn("transition-all duration-300", navExpanded ? "pb-[200px]" : "pb-[72px]")}>
+      <main className={cn("transition-all duration-300", navExpanded ? "pb-[240px]" : "pb-[88px]")}>
         <div className="max-w-lg lg:max-w-5xl xl:max-w-6xl mx-auto px-4 py-5">
           <Suspense fallback={
             <div className="flex items-center justify-center h-[50vh]">
@@ -150,7 +150,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       {navExpanded && (
         <>
           <div className="fixed inset-0 z-20 bg-black/20" onClick={() => setNavExpanded(false)} />
-          <div className="fixed bottom-[56px] left-0 right-0 z-30 glass-strong rounded-t-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] animate-slide-up">
+          <div className="fixed bottom-[76px] left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] animate-slide-up max-w-lg mx-auto">
             <div className="px-5 py-4 space-y-5 max-h-[40vh] overflow-y-auto">
               {extraNav.map((section) => (
                 <div key={section.section}>
@@ -172,21 +172,21 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </>
       )}
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 glass-strong border-t border-white/50 safe-bottom">
+      <nav className="fixed bottom-4 left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] safe-bottom mx-auto max-w-lg">
         <div className="flex items-center justify-around h-[56px] px-2">
           {tabNav.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link key={item.href} to={item.href}
-                className={cn("flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[8px] transition-all duration-200",
-                  isActive ? "text-[#007aff]" : "text-[#6e6e73]")}>
+                className={cn("flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] transition-all duration-200",
+                  isActive ? "bg-[#007aff]/10 text-[#007aff]" : "text-[#6e6e73] hover:bg-[#f5f5f7]")}>
                 <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#007aff]" : "text-[#6e6e73]")} />
                 <span className={cn("text-[10px] font-medium whitespace-nowrap", isActive ? "text-[#007aff]" : "text-[#6e6e73]")}>{item.label}</span>
               </Link>
             )
           })}
           <button onClick={() => setNavExpanded(!navExpanded)}
-            className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[8px] text-[#6e6e73] transition-all duration-200">
+            className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] text-[#6e6e73] hover:bg-[#f5f5f7] transition-all duration-200">
             <ChevronUp className={cn("w-[22px] h-[22px] transition-transform duration-300", navExpanded && "rotate-180")} />
             <span className="text-[10px] font-medium whitespace-nowrap">More</span>
           </button>
