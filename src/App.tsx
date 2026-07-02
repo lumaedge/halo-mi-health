@@ -123,8 +123,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 glass-strong border-b border-[#e5e5ea]/20">
-        <div className="flex items-center justify-between h-[52px] px-5">
+      <header className="fixed top-3 left-3 right-3 z-40 glass-strong rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)] mx-auto max-w-lg">
+        <div className="flex items-center justify-between h-[48px] px-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-[6px] bg-[#007aff] flex items-center justify-center">
               <Heart className="w-3 h-3 text-white" fill="white" />
@@ -135,7 +135,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className={cn("transition-all duration-300", navExpanded ? "pb-[240px]" : "pb-[88px]")}>
+      <main className={cn("transition-all duration-300 pt-[68px]", navExpanded ? "pb-[240px]" : "pb-[88px]")}>
         <div className="max-w-lg lg:max-w-5xl xl:max-w-6xl mx-auto px-4 py-5">
           <Suspense fallback={
             <div className="flex items-center justify-center h-[50vh]">
