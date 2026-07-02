@@ -24,7 +24,22 @@
 }
 
 body {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf4 50%, #f0f2f8 100%);
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(90, 200, 250, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(175, 82, 222, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(52, 199, 89, 0.06) 0%, transparent 50%),
+    linear-gradient(
+      160deg,
+      #e8f4fc 0%,
+      #d8ecf8 12%,
+      #c8e4f4 24%,
+      #d0e0f0 36%,
+      #e8e8f4 48%,
+      #f0e4f0 60%,
+      #e8d8e8 72%,
+      #d8d4e4 84%,
+      #e0e0e8 96%
+    );
   background-attachment: fixed;
   color: #1d1d1f;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
