@@ -172,7 +172,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </>
       )}
 
-      <nav className="fixed bottom-4 left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] safe-bottom mx-auto max-w-lg">
+      <nav className="fixed bottom-4 left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] safe-bottom mx-auto max-w-lg nav-bounce">
         <div className="flex items-center justify-around h-[56px] px-2">
           {tabNav.map((item) => {
             const isActive = pathname === item.href
@@ -180,7 +180,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               <Link key={item.href} to={item.href}
                 className={cn("flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] transition-all duration-200",
                   isActive ? "bg-[#007aff]/10 text-[#007aff]" : "text-[#6e6e73] hover:bg-[#f5f5f7]")}>
-                <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#007aff]" : "text-[#6e6e73]")} />
+                <item.icon className={cn("w-[22px] h-[22px]", isActive ? "text-[#007aff] tab-pop" : "text-[#6e6e73]")} />
                 <span className={cn("text-[10px] font-medium whitespace-nowrap", isActive ? "text-[#007aff]" : "text-[#6e6e73]")}>{item.label}</span>
               </Link>
             )

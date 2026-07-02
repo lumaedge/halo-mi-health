@@ -208,3 +208,85 @@ body {
 .safe-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
+
+/* --- Micro-interactions --- */
+
+/* Card press: tactile squeeze on tap */
+.card-press {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.card-press:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Tab icon pop on active */
+@keyframes tabPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.tab-pop {
+  animation: tabPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Floating nav bounce on switch */
+@keyframes navBounce {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-3px); }
+  60% { transform: translateY(1px); }
+  100% { transform: translateY(0); }
+}
+.nav-bounce {
+  animation: navBounce 0.3s ease;
+}
+
+/* Heart pulse for data loading */
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.pulse-heart {
+  animation: heartPulse 1.5s ease-in-out infinite;
+}
+
+/* Sun/moon rotate toggle */
+@keyframes sunRotate {
+  from { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(0.8); }
+  to { transform: rotate(360deg) scale(1); }
+}
+@keyframes moonRotate {
+  from { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(-180deg) scale(0.8); }
+  to { transform: rotate(-360deg) scale(1); }
+}
+.animate-sun { animation: sunRotate 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.animate-moon { animation: moonRotate 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Smooth badge tap */
+.badge-tap {
+  transition: transform 0.12s ease, background-color 0.2s ease;
+}
+.badge-tap:active {
+  transform: scale(0.92);
+}
+
+/* Page enter slide */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-page-enter {
+  animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Floating elements subtle bob */
+@keyframes subtleBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.animate-bob {
+  animation: subtleBob 3s ease-in-out infinite;
+}
