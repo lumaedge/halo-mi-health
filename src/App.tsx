@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, lazy, Suspense } from "react"
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom"
 import { Toaster } from "sonner"
+import { Analytics } from "@vercel/analytics/react"
 import { supabase } from "@/lib/supabase"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
@@ -268,6 +269,7 @@ export default function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" toastOptions={{ style: { borderRadius: "12px", border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}} />
+      <Analytics />
       </I18nProvider>
     </AuthProvider>
   )
