@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Bell, BellOff, Loader2, Plus, Pill, CalendarCheck, AlertCircle, CheckCircle2, Clock, ChevronRight } from "lucide-react"
+import { CardListSkeletonFallback } from "@/components/skeletons"
 import { cn } from "@/lib/utils"
 import type { Reminder, ReminderType, ReminderFrequency } from "@/types"
 
@@ -43,7 +44,6 @@ export default function Reminders() {
   const [frequency, setFrequency] = useState<ReminderFrequency>("monthly")
   const [nextDue, setNextDue] = useState("")
   const [saving, setSaving] = useState(false)
-  const [profileId, setProfileId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -51,8 +51,6 @@ export default function Reminders() {
   }, [user])
 
   async function load() {
-    const { data: prof } = await supabase.from("profiles").select("id").eq("user_id", user!.id).single()
-    if (prof) setProfileId(prof.id)
     const { data } = await supabase.from("reminders").select("*").eq("user_id", user!.id).order("next_due_date", { ascending: true })
     setReminders(data || [])
     setLoading(false)
@@ -104,7 +102,7 @@ export default function Reminders() {
     setReminders(prev => prev.filter(r => r.id !== id))
   }
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
+  if (loading) return <CardListSkeletonFallback count={4} />
 
   const now = new Date()
   const dueReminders = reminders.filter(r => r.enabled && r.next_due_date && new Date(r.next_due_date) <= now)

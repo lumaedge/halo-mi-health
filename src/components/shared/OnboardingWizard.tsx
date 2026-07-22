@@ -118,20 +118,24 @@ export function OnboardingWizard({ onComplete }: Props) {
   async function finish() {
     if (!user) return
     setSaving(true)
-    await supabase.from("profiles").upsert({
-      user_id: user.id,
-      full_name: form.fullName || undefined,
-      phone: form.phone || undefined,
-      date_of_birth: form.dateOfBirth || undefined,
-      blood_type: form.bloodType || undefined,
-      allergies: form.allergies || undefined,
-      emergency_contact_name: form.emergencyContact || undefined,
-      emergency_contact_phone: form.emergencyPhone || undefined,
-      language: form.language,
-      push_enabled: form.pushEnabled,
-      onboarding_completed: true,
-      updated_at: new Date().toISOString(),
-    })
+    try {
+      await supabase.from("profiles").upsert({
+        user_id: user.id,
+        full_name: form.fullName || undefined,
+        phone: form.phone || undefined,
+        date_of_birth: form.dateOfBirth || undefined,
+        blood_type: form.bloodType || undefined,
+        allergies: form.allergies || undefined,
+        emergency_contact_name: form.emergencyContact || undefined,
+        emergency_contact_phone: form.emergencyPhone || undefined,
+        language: form.language,
+        push_enabled: form.pushEnabled,
+        onboarding_completed: true,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "user_id" })
+    } catch (e) {
+      console.error("Onboarding save error", e)
+    }
     setSaving(false)
     onComplete()
   }

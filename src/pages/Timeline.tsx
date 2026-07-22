@@ -3,31 +3,32 @@ import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Loader2 } from "lucide-react"
+import { Clock } from "lucide-react"
+import { toast } from "sonner"
+import { TimelineSkeleton } from "@/components/skeletons"
 
 export default function Timeline() {
-  const { user } = useAuth()
+  const { user, profile: authProfile } = useAuth()
+  const pid = authProfile?.id ?? user?.id
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) return
-    async function load() {
-      const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", user.id).single()
-      if (profile) {
-        const { data } = await supabase
-          .from("timeline_events")
-          .select("*")
-          .eq("patient_id", profile.id)
-          .order("date", { ascending: false })
-        setEvents(data || [])
+    if (!pid) { setLoading(false); return }
+    ;(async () => {
+      try {
+        const { data, error } = await supabase.from("timeline_events").select("*").eq("patient_id", pid).order("date", { ascending: false })
+        if (error) { toast.error("Load failed: " + error.message); setEvents([]) }
+        else { setEvents(data || []) }
+      } catch (e: any) {
+        toast.error("Load error: " + (e?.message || e))
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    }
-    load()
-  }, [user])
+    })()
+  }, [pid])
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
+  if (loading) return <TimelineSkeleton />
 
   return (
     <div className="space-y-6 animate-fade-in">

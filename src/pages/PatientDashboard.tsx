@@ -7,7 +7,9 @@ import { Clock, Shield, Pill, AlertTriangle, Heart, ArrowRight, Plus, Upload, Sp
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
 import { HealthScoreCard } from "@/components/shared/HealthScoreCard"
+import { VitalsTracker } from "@/components/shared/VitalsTracker"
 import { calculateAndSaveHealthScore } from "@/lib/calculateHealthScore"
+import { DashboardSkeleton } from "@/components/skeletons"
 
 const calmingQuotes = [
   "Take a deep breath. You're doing great.",
@@ -90,13 +92,7 @@ export default function PatientDashboard() {
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
   const quote = calmingQuotes[new Date().getDate() % calmingQuotes.length]
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  if (loading) return <DashboardSkeleton />
 
   if (ambient) {
     return (
@@ -212,6 +208,7 @@ export default function PatientDashboard() {
       </div>
 
       <HealthScoreCard />
+      {profile?.id && <VitalsTracker patientId={profile.id} compact />}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 animate-stagger">
         <Card className="hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300">

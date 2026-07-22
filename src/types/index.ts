@@ -192,3 +192,68 @@ export interface HealthSyncData {
   recorded_at: string
   created_at: string
 }
+
+export interface MedicationDose {
+  id: string
+  medication_id: string
+  patient_id: string
+  scheduled_time: string
+  taken_at?: string
+  status: "taken" | "skipped" | "snoozed"
+  notes?: string
+  created_at: string
+}
+
+export type VitalSignType = "blood_pressure_systolic" | "blood_pressure_diastolic" | "blood_sugar" | "heart_rate" | "oxygen_saturation" | "temperature" | "respiratory_rate"
+
+export interface VitalSign {
+  id: string
+  patient_id: string
+  type: VitalSignType
+  value: number
+  unit: string
+  recorded_at: string
+  notes?: string
+  source: "manual" | "apple_health" | "google_fit" | "device"
+  created_at: string
+}
+
+export interface ConditionGoal {
+  id: string
+  condition_id: string
+  patient_id: string
+  metric: string
+  target_value: number
+  current_value?: number
+  unit?: string
+  comparison: "lt" | "lte" | "gt" | "gte" | "eq"
+  achieved: boolean
+  started_at: string
+  target_date?: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Consultation {
+  id: string
+  patient_id: string
+  symptoms: string[]
+  severity: "mild" | "moderate" | "severe"
+  description?: string
+  urgency: "self-care" | "appointment" | "urgent" | "emergency"
+  possible_conditions?: string[]
+  recommendation?: string
+  ai_summary?: string
+  created_at: string
+}
+
+export interface ConsultationImage {
+  id: string
+  consultation_id?: string
+  patient_id: string
+  storage_path: string
+  image_type: "symptom_photo" | "rash" | "wound" | "other"
+  ai_analysis?: string
+  created_at: string
+}

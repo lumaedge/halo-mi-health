@@ -3,11 +3,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Eye, FileText, FileImage, File, Upload, Loader2 } from "lucide-react"
+import { Search, Eye, FileText, FileImage, File, Upload } from "lucide-react"
 import { ImagePreview } from "@/components/records/image-preview"
 import { HandwrittenNoteUpload } from "@/components/records/handwritten-note-upload"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
+import { CardGridSkeleton } from "@/components/skeletons"
 
 export default function Vault() {
   const { user } = useAuth()
@@ -73,11 +74,7 @@ export default function Vault() {
         title={previewTitle}
       />
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" />
-        </div>
-      ) : (
+      {loading ? <CardGridSkeleton count={6} /> : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {records.length > 0 ? records.map((item: any) => {
             const Icon = item.record_type === "imaging" ? FileImage : item.is_handwritten ? File : FileText

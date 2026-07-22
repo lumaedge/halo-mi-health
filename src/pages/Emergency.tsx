@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertTriangle, Heart, Phone, User, MapPin, Calendar, Ruler, Weight, Droplets, Ambulance as AmbulanceIcon, Shield, Pencil, Save, X, ChevronRight, UserPlus } from "lucide-react"
 import { toast } from "sonner"
+import { ProfileSkeleton } from "@/components/skeletons"
 
 interface EmergencyProfile {
   id: string
@@ -88,13 +89,7 @@ export default function Emergency() {
     ? Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / 31557600000)
     : null
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  if (loading) return <ProfileSkeleton />
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -126,16 +121,16 @@ export default function Emergency() {
             <CardContent className="p-5 space-y-4">
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Information</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
-                <Input value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
+                <Label htmlFor="emergency-full_name" className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Input id="emergency-full_name" value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Month & Year of Birth</Label>
-                <Input type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
+                <Label htmlFor="emergency-date_of_birth" className="text-[13px] text-[#6e6e73]">Month & Year of Birth</Label>
+                <Input id="emergency-date_of_birth" type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Location (City / Region)</Label>
-                <Input value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="e.g. Durban, KwaZulu-Natal" />
+                <Label htmlFor="emergency-location" className="text-[13px] text-[#6e6e73]">Location (City / Region)</Label>
+                <Input id="emergency-location" value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="e.g. Durban, KwaZulu-Natal" />
               </div>
             </CardContent>
           </Card>
@@ -145,12 +140,12 @@ export default function Emergency() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Biometrics</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
-                  <Input type="number" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
+                  <Label htmlFor="emergency-height_cm" className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
+                  <Input id="emergency-height_cm" type="number" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
-                  <Input type="number" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
+                  <Label htmlFor="emergency-weight_kg" className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
+                  <Input id="emergency-weight_kg" type="number" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
               </div>
               {form.height_cm && form.weight_kg && (
@@ -159,8 +154,8 @@ export default function Emergency() {
                 </p>
               )}
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
-                <Input type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} placeholder="e.g. 0.85" />
+                <Label htmlFor="emergency-waist_hip_ratio" className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
+                <Input id="emergency-waist_hip_ratio" type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} placeholder="e.g. 0.85" />
               </div>
             </CardContent>
           </Card>
@@ -169,12 +164,12 @@ export default function Emergency() {
             <CardContent className="p-5 space-y-4">
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Details</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Blood Type</Label>
-                <Input value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} placeholder="e.g. A+" />
+                <Label htmlFor="emergency-blood_type" className="text-[13px] text-[#6e6e73]">Blood Type</Label>
+                <Input id="emergency-blood_type" value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} placeholder="e.g. A+" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Allergies</Label>
-                <Input value={form.allergies || ""} onChange={e => update("allergies", e.target.value)} placeholder="e.g. Penicillin, Peanuts" />
+                <Label htmlFor="emergency-allergies" className="text-[13px] text-[#6e6e73]">Allergies</Label>
+                <Input id="emergency-allergies" value={form.allergies || ""} onChange={e => update("allergies", e.target.value)} placeholder="e.g. Penicillin, Peanuts" />
               </div>
             </CardContent>
           </Card>
@@ -183,17 +178,17 @@ export default function Emergency() {
             <CardContent className="p-5 space-y-4">
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Next of Kin</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
-                <Input value={form.next_of_kin_name || ""} onChange={e => update("next_of_kin_name", e.target.value)} />
+                <Label htmlFor="emergency-next_of_kin_name" className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Input id="emergency-next_of_kin_name" value={form.next_of_kin_name || ""} onChange={e => update("next_of_kin_name", e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Phone</Label>
-                  <Input value={form.next_of_kin_phone || ""} onChange={e => update("next_of_kin_phone", e.target.value)} />
+                  <Label htmlFor="emergency-next_of_kin_phone" className="text-[13px] text-[#6e6e73]">Phone</Label>
+                  <Input id="emergency-next_of_kin_phone" value={form.next_of_kin_phone || ""} onChange={e => update("next_of_kin_phone", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Relationship</Label>
-                  <Input value={form.next_of_kin_relationship || ""} onChange={e => update("next_of_kin_relationship", e.target.value)} placeholder="e.g. Spouse" />
+                  <Label htmlFor="emergency-next_of_kin_relationship" className="text-[13px] text-[#6e6e73]">Relationship</Label>
+                  <Input id="emergency-next_of_kin_relationship" value={form.next_of_kin_relationship || ""} onChange={e => update("next_of_kin_relationship", e.target.value)} placeholder="e.g. Spouse" />
                 </div>
               </div>
             </CardContent>
@@ -203,12 +198,12 @@ export default function Emergency() {
             <CardContent className="p-5 space-y-4">
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Emergency Contacts</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Contact Name</Label>
-                <Input value={form.emergency_contact_name || ""} onChange={e => update("emergency_contact_name", e.target.value)} />
+                <Label htmlFor="emergency-emergency_contact_name" className="text-[13px] text-[#6e6e73]">Contact Name</Label>
+                <Input id="emergency-emergency_contact_name" value={form.emergency_contact_name || ""} onChange={e => update("emergency_contact_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Contact Phone</Label>
-                <Input value={form.emergency_contact_phone || ""} onChange={e => update("emergency_contact_phone", e.target.value)} />
+                <Label htmlFor="emergency-emergency_contact_phone" className="text-[13px] text-[#6e6e73]">Contact Phone</Label>
+                <Input id="emergency-emergency_contact_phone" value={form.emergency_contact_phone || ""} onChange={e => update("emergency_contact_phone", e.target.value)} />
               </div>
             </CardContent>
           </Card>
@@ -218,12 +213,12 @@ export default function Emergency() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Ambulance Service</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Service Name</Label>
-                  <Input value={form.ambulance_service || ""} onChange={e => update("ambulance_service", e.target.value)} placeholder="e.g. Netcare 911" />
+                  <Label htmlFor="emergency-ambulance_service" className="text-[13px] text-[#6e6e73]">Service Name</Label>
+                  <Input id="emergency-ambulance_service" value={form.ambulance_service || ""} onChange={e => update("ambulance_service", e.target.value)} placeholder="e.g. Netcare 911" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Number</Label>
-                  <Input value={form.ambulance_number || ""} onChange={e => update("ambulance_number", e.target.value)} placeholder="e.g. 082 911" />
+                  <Label htmlFor="emergency-ambulance_number" className="text-[13px] text-[#6e6e73]">Number</Label>
+                  <Input id="emergency-ambulance_number" value={form.ambulance_number || ""} onChange={e => update("ambulance_number", e.target.value)} placeholder="e.g. 082 911" />
                 </div>
               </div>
             </CardContent>
@@ -234,12 +229,12 @@ export default function Emergency() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Health Insurance / Medical Aid</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Scheme</Label>
-                  <Input value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} placeholder="e.g. Discovery Health" />
+                  <Label htmlFor="emergency-medical_scheme" className="text-[13px] text-[#6e6e73]">Scheme</Label>
+                  <Input id="emergency-medical_scheme" value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} placeholder="e.g. Discovery Health" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Membership No.</Label>
-                  <Input value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
+                  <Label htmlFor="emergency-membership_number" className="text-[13px] text-[#6e6e73]">Membership No.</Label>
+                  <Input id="emergency-membership_number" value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
                 </div>
               </div>
             </CardContent>

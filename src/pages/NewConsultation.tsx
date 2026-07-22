@@ -1,28 +1,44 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/App"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Mic, Camera, Upload, Send, Loader2, ChevronRight, X, Plus, FileText, Brain, Calendar, Phone, Stethoscope, AlertTriangle, MessageCircle, ChevronDown } from "lucide-react"
+import { Sparkles, Mic, Camera, Upload, Send, Loader2, ChevronRight, X, Plus, FileText, Brain, Calendar, Phone, Stethoscope, AlertTriangle, MessageCircle, ChevronDown, Clock, History } from "lucide-react"
 import { toast } from "sonner"
-import { commonSymptomsList, getSymptomInfo, getFollowUps, evaluateTriage, type TriageResult, type FollowUpQuestion, type FollowUpAnswer } from "@/lib/triage-engine"
+import { commonSymptomsList, getFollowUps, evaluateTriage, type TriageResult, type FollowUpQuestion, type FollowUpAnswer } from "@/lib/triage-engine"
+import { supabase } from "@/lib/supabase"
+import type { Consultation } from "@/types"
 
 export default function NewConsultation() {
-  const { user } = useAuth()
+  const { user, profile: authProfile } = useAuth()
+  const pid = authProfile?.id ?? user?.id
   const [symptoms, setSymptoms] = useState(commonSymptomsList.map(s => ({ ...s, selected: false })))
   const [customSymptom, setCustomSymptom] = useState("")
   const [description, setDescription] = useState("")
   const [duration, setDuration] = useState("")
   const [severity, setSeverity] = useState<"mild" | "moderate" | "severe" | null>(null)
   const [mediaFiles, setMediaFiles] = useState<string[]>([])
+  const [mediaUploading, setMediaUploading] = useState(false)
   const [aiAdvice, setAiAdvice] = useState<TriageResult | null>(null)
   const [loadingAi, setLoadingAi] = useState(false)
   const [followUpQuestions, setFollowUpQuestions] = useState<FollowUpQuestion[]>([])
   const [followUpAnswers, setFollowUpAnswers] = useState<FollowUpAnswer[]>([])
   const [showFollowUp, setShowFollowUp] = useState(false)
+  const [history, setHistory] = useState<Consultation[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!pid) { setLoadingHistory(false); return }
+    supabase.from("consultations").select("*").eq("patient_id", pid).order("created_at", { ascending: false }).limit(5).then(({ data }) => {
+      setHistory(data || [])
+      setLoadingHistory(false)
+    })
+  }, [pid])
 
   function toggleSymptom(id: string) {
     const next = symptoms.map(s => s.id === id ? { ...s, selected: !s.selected } : s)
@@ -47,17 +63,23 @@ export default function NewConsultation() {
     setCustomSymptom("")
   }
 
-  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
-    if (!files) return
+    if (!files || !pid) return
+    setMediaUploading(true)
+    const uploaded: string[] = []
     for (let i = 0; i < files.length; i++) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        if (ev.target?.result) setMediaFiles(prev => [...prev, ev.target!.result as string])
-      }
-      reader.readAsDataURL(files[i])
+      const file = files[i]
+      const ext = file.name.split(".").pop() || "jpg"
+      const path = `consultations/${pid}/${Date.now()}-${i}.${ext}`
+      const { error } = await supabase.storage.from("medical-images").upload(path, file)
+      if (error) { toast.error("Upload failed: " + error.message); continue }
+      const { data: { publicUrl } } = supabase.storage.from("medical-images").getPublicUrl(path)
+      uploaded.push(publicUrl)
     }
-    toast.success(`${files.length} file(s) added`)
+    setMediaFiles(prev => [...prev, ...uploaded])
+    setMediaUploading(false)
+    if (uploaded.length > 0) toast.success(`${uploaded.length} file(s) uploaded`)
   }
 
   function setFollowUpAnswer(questionId: string, answer: string) {
@@ -72,7 +94,7 @@ export default function NewConsultation() {
     })
   }
 
-  function getAiAdvice() {
+  async function getAiAdvice() {
     const selectedSymptoms = symptoms.filter(s => s.selected)
     if (selectedSymptoms.length === 0 && !description.trim()) {
       toast.error("Please select or describe your symptoms first")
@@ -86,7 +108,7 @@ export default function NewConsultation() {
     setLoadingAi(true)
     setAiAdvice(null)
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const result = evaluateTriage({
         symptomIds: selectedSymptoms.map(s => s.id).filter(id => !id.startsWith("custom-")),
         customSymptoms: selectedSymptoms.filter(s => s.id.startsWith("custom-")).map(s => s.label),
@@ -97,12 +119,27 @@ export default function NewConsultation() {
       })
       setAiAdvice(result)
       setLoadingAi(false)
+
+      if (!pid) return
+      setSaving(true)
+      const { error } = await supabase.from("consultations").insert({
+        patient_id: pid,
+        symptoms: selectedSymptoms.map(s => s.label),
+        severity,
+        description: description || null,
+        urgency: result.urgency,
+        possible_conditions: result.possibleConditions,
+        recommendation: result.recommendation,
+        ai_summary: result.recommendation,
+      })
+      if (error) console.error("Failed to save consultation", error)
+      setSaving(false)
     }, 1200)
   }
 
   const selectedCount = symptoms.filter(s => s.selected).length
 
-  const urgencyColors = {
+  const urgencyColors: Record<string, { bg: string; text: string; label: string }> = {
     "self-care": { bg: "bg-[#e8f5e9]", text: "text-[#34c759]", label: "Self-care recommended" },
     "appointment": { bg: "bg-[#fef0d9]", text: "text-[#ff9f0a]", label: "Book an appointment" },
     "urgent": { bg: "bg-[#fce8e6]", text: "text-[#ff3b30]", label: "Urgent care needed" },
@@ -116,9 +153,39 @@ export default function NewConsultation() {
           <Sparkles className="w-[18px] h-[18px]" />
           <span className="text-[13px] font-semibold uppercase tracking-wider opacity-80">AI Consultation</span>
         </div>
-        <h1 className="text-[28px] font-bold tracking-tight">New Illness or Concern</h1>
+        <h1 className="text-[28px] font-bold tracking-tight">Symptom Checker</h1>
         <p className="text-[14px] text-white/80 mt-1">Describe your symptoms for AI-powered advice</p>
       </div>
+
+      <button onClick={() => setShowHistory(!showHistory)} className="w-full flex items-center justify-between p-4 rounded-[16px] bg-[#f5f5f7] text-[14px] text-[#1d1d1f] font-medium hover:bg-[#e5e5ea] transition-colors">
+        <span className="flex items-center gap-2"><History className="w-[16px] h-[16px]" /> Previous consultations</span>
+        <ChevronDown className={`w-[16px] h-[16px] transition-transform ${showHistory ? "rotate-180" : ""}`} />
+      </button>
+
+      {showHistory && (
+        <div className="space-y-2">
+          {loadingHistory ? (
+            <div className="text-center py-4 text-[13px] text-[#6e6e73]">Loading...</div>
+          ) : history.length === 0 ? (
+            <div className="text-center py-4 text-[13px] text-[#6e6e73]">No previous consultations</div>
+          ) : history.map(h => (
+            <Card key={h.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowHistory(false)}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Stethoscope className="w-[16px] h-[16px] text-[#6e6e73] shrink-0" />
+                    <span className="text-[14px] font-medium text-[#1d1d1f] truncate">{h.symptoms.slice(0, 3).join(", ")}{h.symptoms.length > 3 ? "..." : ""}</span>
+                  </div>
+                  <Badge variant={h.urgency === "emergency" || h.urgency === "urgent" ? "destructive" : h.urgency === "appointment" ? "warning" : "success"} className="text-[10px] shrink-0 ml-2">
+                    {h.urgency === "self-care" ? "Self-care" : h.urgency}
+                  </Badge>
+                </div>
+                <p className="text-[12px] text-[#6e6e73] mt-1">{new Date(h.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-5 space-y-4">
@@ -248,24 +315,24 @@ export default function NewConsultation() {
             <div className="w-[28px] h-[28px] rounded-[8px] bg-[#34c759] flex items-center justify-center text-white text-[12px] font-bold">{followUpQuestions.length > 0 ? "4" : "3"}</div>
             <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Add Media</h2>
           </div>
-          <p className="text-[13px] text-[#6e6e73]">Photos or videos of visible symptoms</p>
+          <p className="text-[13px] text-[#6e6e73]">Photos of visible symptoms (optional)</p>
 
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,video/*"
+            accept="image/*"
             multiple
             className="hidden"
             onChange={handleFileUpload}
           />
 
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1 gap-2" onClick={() => fileInputRef.current?.click()}>
-              <Camera className="w-[16px] h-[16px]" />
+            <Button variant="outline" className="flex-1 gap-2" onClick={() => fileInputRef.current?.click()} disabled={mediaUploading}>
+              {mediaUploading ? <Loader2 className="w-[16px] h-[16px] animate-spin" /> : <Camera className="w-[16px] h-[16px]" />}
               Camera
             </Button>
-            <Button variant="outline" className="flex-1 gap-2" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="w-[16px] h-[16px]" />
+            <Button variant="outline" className="flex-1 gap-2" onClick={() => fileInputRef.current?.click()} disabled={mediaUploading}>
+              {mediaUploading ? <Loader2 className="w-[16px] h-[16px] animate-spin" /> : <Upload className="w-[16px] h-[16px]" />}
               Upload
             </Button>
           </div>
@@ -299,6 +366,10 @@ export default function NewConsultation() {
           <><Brain className="w-[18px] h-[18px]" /> Get AI Assessment</>
         )}
       </Button>
+
+      {saving && (
+        <div className="text-center text-[13px] text-[#6e6e73]"><Loader2 className="w-[14px] h-[14px] animate-spin inline mr-1" />Saving to your history...</div>
+      )}
 
       {aiAdvice && (
         <Card className={`border-l-4 ${

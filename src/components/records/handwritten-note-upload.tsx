@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { UploadDropzone } from "@/components/ui/upload-dropzone"
 import { Upload, Loader2, CheckCircle, AlertCircle } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/App"
 import { tauriUploadHandwrittenNote, isTauri } from "@/lib/tauri"
 import type { RecordType } from "@/types"
@@ -50,30 +51,77 @@ export function HandwrittenNoteUpload({ open, onOpenChange, onSuccess }: Handwri
     setUploading(true)
     setResult(null)
 
-    const arrayBuffer = await file.arrayBuffer()
-    const fileData = Array.from(new Uint8Array(arrayBuffer))
+    if (isTauri()) {
+      const arrayBuffer = await file.arrayBuffer()
+      const fileData = Array.from(new Uint8Array(arrayBuffer))
 
-    const res = await tauriUploadHandwrittenNote(
-      user.id,
-      user.email ?? "",
-      user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "User",
-      fileData,
-      file.name,
-      file.type,
-      title,
-      description,
-      recordType,
-    )
-    setResult(res)
-    setUploading(false)
+      const res = await tauriUploadHandwrittenNote(
+        user.id,
+        user.email ?? "",
+        user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "User",
+        fileData,
+        file.name,
+        file.type,
+        title,
+        description,
+        recordType,
+      )
+      setResult(res)
+      setUploading(false)
 
-    if (res.success) {
+      if (res.success) {
+        onSuccess?.()
+        setTimeout(() => { onOpenChange(false); resetState() }, 1200)
+      }
+      return
+    }
+
+    try {
+      const { data: prof } = await supabase.from("profiles").select("id").eq("user_id", user.id).maybeSingle()
+      if (!prof) {
+        setResult({ error: "Profile not found. Please complete your profile first." })
+        setUploading(false)
+        return
+      }
+
+      const ext = file.name.split(".").pop() || "jpg"
+      const filePath = `${prof.id}/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from("medical-images")
+        .upload(filePath, file, { contentType: file.type, cacheControl: "3600" })
+
+      if (uploadError) {
+        setResult({ error: `Upload failed: ${uploadError.message}` })
+        setUploading(false)
+        return
+      }
+
+      const { error: insertError } = await supabase.from("medical_records").insert({
+        patient_id: prof.id,
+        record_type: recordType,
+        title,
+        description: description || null,
+        date: new Date().toISOString().split("T")[0],
+        is_handwritten: true,
+        original_image_url: filePath,
+      })
+
+      if (insertError) {
+        setResult({ error: `Failed to save record: ${insertError.message}` })
+        setUploading(false)
+        return
+      }
+
+      setResult({ success: true })
+      setUploading(false)
       onSuccess?.()
       setTimeout(() => { onOpenChange(false); resetState() }, 1200)
+    } catch (err) {
+      setResult({ error: err instanceof Error ? err.message : "An unexpected error occurred" })
+      setUploading(false)
     }
   }
-
-  const inTauri = isTauri()
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) resetState(); onOpenChange(o) }}>
@@ -81,18 +129,9 @@ export function HandwrittenNoteUpload({ open, onOpenChange, onSuccess }: Handwri
         <DialogHeader>
           <DialogTitle className="text-[20px]">Upload Handwritten Note</DialogTitle>
           <DialogDescription className="text-[14px] text-[#6e6e73]">
-            {inTauri ? "Take a photo of the handwritten note your doctor gave you." : "This feature is only available in the mobile app."}
+            Upload a photo or scan of a handwritten note from your doctor.
           </DialogDescription>
         </DialogHeader>
-        {!inTauri && (
-          <div className="flex flex-col items-center gap-4 py-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-[#f5f5f7] flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-[#6e6e73]" />
-            </div>
-            <p className="text-[15px] text-[#6e6e73]">Download the Halo Mi Health app to upload handwritten notes directly from your phone.</p>
-          </div>
-        )}
-        {inTauri && (
 
         <div className="space-y-5">
           <UploadDropzone
@@ -179,7 +218,6 @@ export function HandwrittenNoteUpload({ open, onOpenChange, onSuccess }: Handwri
             </Button>
           </div>
         </div>
-        )}
       </DialogContent>
     </Dialog>
   )

@@ -15,9 +15,10 @@ import { HealthSync } from "@/components/shared/HealthSync"
 import { OcrCapture } from "@/components/shared/OcrCapture"
 import { useI18n } from "@/lib/i18n/I18nProvider"
 import type { Profile as ProfileType } from "@/types"
+import { ProfileSkeleton } from "@/components/skeletons"
 
 export default function Profile() {
-  const { user } = useAuth()
+  const { user, profile: authProfile } = useAuth()
   const [profile, setProfile] = useState<ProfileType | null>(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
@@ -25,32 +26,32 @@ export default function Profile() {
   const [form, setForm] = useState<Partial<ProfileType>>({})
 
   useEffect(() => {
-    if (!user) return
-    async function load() {
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .single()
-      if (data) {
-        setProfile(data)
-        setForm(data)
+    if (!user) { setLoading(false); return }
+    const timer = setTimeout(() => { setLoading(false); toast.error("DB query timed out") }, 12000)
+    ;(async () => {
+      try {
+        const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle()
+        setProfile(data ?? (authProfile as ProfileType | null))
+        setForm((data ?? authProfile ?? {}) as Partial<ProfileType>)
+      } catch (e: any) {
+        toast.error("Load error: " + (e?.message || e))
+      } finally {
+        clearTimeout(timer); setLoading(false)
       }
-      setLoading(false)
-    }
-    load()
-  }, [user])
+    })()
+  }, [user, authProfile])
 
   function update(field: keyof ProfileType, value: any) {
     setForm(prev => ({ ...prev, [field]: value || undefined }))
   }
 
   async function saveProfile() {
-    if (!user || !profile) return
+    if (!user) return
     setSaving(true)
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ user_id: user.id, ...form, updated_at: new Date().toISOString() })
+    const { error } = await supabase.from("profiles").upsert(
+      { user_id: user.id, ...form, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" }
+    )
     if (error) {
       toast.error("Failed to save: " + error.message)
     } else {
@@ -74,13 +75,7 @@ export default function Profile() {
 
   const bmiColor = bmiCategory === "Normal" ? "text-[#34c759]" : "text-[#ff9f0a]"
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  if (loading) return <ProfileSkeleton />
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -130,24 +125,24 @@ export default function Profile() {
             <CardContent className="p-5 space-y-4">
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Personal Details</h2>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Full Name</Label>
-                <Input value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
+                <Label htmlFor="profile-full_name" className="text-[13px] text-[#6e6e73]">Full Name</Label>
+                <Input id="profile-full_name" value={form.full_name || ""} onChange={e => update("full_name", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Email</Label>
-                <Input value={form.email || ""} onChange={e => update("email", e.target.value)} />
+                <Label htmlFor="profile-email" className="text-[13px] text-[#6e6e73]">Email</Label>
+                <Input id="profile-email" value={form.email || ""} onChange={e => update("email", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Phone</Label>
-                <Input value={form.phone || ""} onChange={e => update("phone", e.target.value)} />
+                <Label htmlFor="profile-phone" className="text-[13px] text-[#6e6e73]">Phone</Label>
+                <Input id="profile-phone" value={form.phone || ""} onChange={e => update("phone", e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Date of Birth</Label>
-                <Input type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
+                <Label htmlFor="profile-date_of_birth" className="text-[13px] text-[#6e6e73]">Date of Birth</Label>
+                <Input id="profile-date_of_birth" type="month" value={form.date_of_birth?.slice(0, 7) || ""} onChange={e => update("date_of_birth", e.target.value + "-01")} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Location</Label>
-                <Input value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="City / Region" />
+                <Label htmlFor="profile-location" className="text-[13px] text-[#6e6e73]">Location</Label>
+                <Input id="profile-location" value={form.location || ""} onChange={e => update("location", e.target.value)} placeholder="City / Region" />
               </div>
             </CardContent>
           </Card>
@@ -157,12 +152,12 @@ export default function Profile() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Biometrics</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
-                  <Input type="number" step="0.1" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
+                  <Label htmlFor="profile-height_cm" className="text-[13px] text-[#6e6e73]">Height (cm)</Label>
+                  <Input id="profile-height_cm" type="number" step="0.1" value={form.height_cm || ""} onChange={e => update("height_cm", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
-                  <Input type="number" step="0.1" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
+                  <Label htmlFor="profile-weight_kg" className="text-[13px] text-[#6e6e73]">Weight (kg)</Label>
+                  <Input id="profile-weight_kg" type="number" step="0.1" value={form.weight_kg || ""} onChange={e => update("weight_kg", e.target.value ? Number(e.target.value) : undefined)} />
                 </div>
               </div>
               {bmi && (
@@ -171,8 +166,8 @@ export default function Profile() {
                 </div>
               )}
               <div className="space-y-1.5">
-                <Label className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
-                <Input type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} />
+                <Label htmlFor="profile-waist_hip_ratio" className="text-[13px] text-[#6e6e73]">Waist-Hip Ratio</Label>
+                <Input id="profile-waist_hip_ratio" type="number" step="0.01" value={form.waist_hip_ratio || ""} onChange={e => update("waist_hip_ratio", e.target.value ? Number(e.target.value) : undefined)} />
               </div>
             </CardContent>
           </Card>
@@ -182,12 +177,12 @@ export default function Profile() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Details</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Blood Type</Label>
-                  <Input value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} />
+                  <Label htmlFor="profile-blood_type" className="text-[13px] text-[#6e6e73]">Blood Type</Label>
+                  <Input id="profile-blood_type" value={form.blood_type || ""} onChange={e => update("blood_type", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">ID / Passport No.</Label>
-                  <Input value={form.id_number || ""} onChange={e => update("id_number", e.target.value)} />
+                  <Label htmlFor="profile-id_number" className="text-[13px] text-[#6e6e73]">ID / Passport No.</Label>
+                  <Input id="profile-id_number" value={form.id_number || ""} onChange={e => update("id_number", e.target.value)} />
                 </div>
               </div>
             </CardContent>
@@ -198,12 +193,12 @@ export default function Profile() {
               <h2 className="text-[17px] font-semibold text-[#1d1d1f]">Medical Aid / Insurance</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Scheme</Label>
-                  <Input value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} />
+                  <Label htmlFor="profile-medical_scheme" className="text-[13px] text-[#6e6e73]">Scheme</Label>
+                  <Input id="profile-medical_scheme" value={form.medical_scheme || ""} onChange={e => update("medical_scheme", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] text-[#6e6e73]">Membership No.</Label>
-                  <Input value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
+                  <Label htmlFor="profile-membership_number" className="text-[13px] text-[#6e6e73]">Membership No.</Label>
+                  <Input id="profile-membership_number" value={form.membership_number || ""} onChange={e => update("membership_number", e.target.value)} />
                 </div>
               </div>
             </CardContent>

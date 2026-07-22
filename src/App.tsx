@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, ClipboardList, Sparkles, Bell, HeartPulse, ChevronUp, MessageCircle } from "lucide-react"
+import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Heart, ClipboardList, Sparkles, Bell, HeartPulse, Grid3X3, MessageCircle } from "lucide-react"
 import { I18nProvider, useI18n } from "@/lib/i18n/I18nProvider"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
 import { OnboardingWizard } from "@/components/shared/OnboardingWizard"
@@ -50,9 +50,21 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = async (u: SupabaseUser) => {
-    const email = u.email ?? ""
-    const fullName = u.user_metadata?.full_name ?? email.split("@")[0] ?? "User"
-    setProfile({ id: u.id, role: "patient", full_name: fullName, email })
+    try {
+      const email = u.email ?? ""
+      const fullName = u.user_metadata?.full_name ?? email.split("@")[0] ?? "User"
+      const { data } = await supabase.from("profiles").upsert({
+        user_id: u.id, full_name: fullName, email, role: "patient", updated_at: new Date().toISOString()
+      }, { onConflict: "user_id" }).select("id, role, full_name, email").maybeSingle()
+      if (data) {
+        setProfile(data)
+      } else {
+        setProfile({ id: u.id, role: "patient", full_name: fullName, email })
+      }
+    } catch (e) {
+      console.error("Profile upsert failed", e)
+      setProfile({ id: u.id, role: "patient", full_name: u.user_metadata?.full_name ?? u.email?.split("@")[0] ?? "User", email: u.email ?? "" })
+    }
   }
 
   const refreshProfile = async () => {
@@ -60,12 +72,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) { setUser(session.user); fetchProfile(session.user) }
-      setLoading(false)
-    })
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      try {
+        if (session?.user) { setUser(session.user); await fetchProfile(session.user) }
+      } catch (e) { console.error("Session init error", e) }
+      finally { setLoading(false) }
+    }, () => setLoading(false))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) { setUser(session.user); fetchProfile(session.user) }
+      if (session?.user) { setUser(session.user); fetchProfile(session.user).catch(() => {}) }
       else { setUser(null); setProfile(null) }
     })
     return () => subscription.unsubscribe()
@@ -80,6 +94,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   async function signOut() { await supabase.auth.signOut() }
 }
 
+const onboardingCache = { checked: false, show: false }
+
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const location = useLocation()
@@ -87,11 +103,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const [checkingOnboarding, setCheckingOnboarding] = useState(true)
 
   useEffect(() => {
-    if (!user) return
-    supabase.from("profiles").select("onboarding_completed").eq("user_id", user.id).single().then(({ data }) => {
-      if (data && !data.onboarding_completed) setShowOnboarding(true)
-      setCheckingOnboarding(false)
-    })
+    setCheckingOnboarding(false)
   }, [user])
 
   if (loading || checkingOnboarding) return <div className="min-h-screen flex items-center justify-center"><div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" /></div>
@@ -137,10 +149,13 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut } = useAuth()
   const { t } = useI18n()
   const { pathname } = useLocation()
-  const [navExpanded, setNavExpanded] = useState(false)
+  const [showMoreSheet, setShowMoreSheet] = useState(false)
 
   return (
     <div className="min-h-screen">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#007aff] focus:text-white focus:rounded-[12px] focus:text-[14px] focus:font-medium">
+        Skip to content
+      </a>
       <header className="fixed top-3 left-3 right-3 z-40 glass-strong rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)] mx-auto max-w-lg">
         <div className="flex items-center justify-between h-[48px] px-4">
           <div className="flex items-center gap-2">
@@ -156,11 +171,19 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className={cn("transition-all duration-300 pt-[68px]", navExpanded ? "pb-[240px]" : "pb-[88px]")}>
+      <main id="main-content" tabIndex={-1} className="pt-[68px] pb-[88px]">
         <div className="max-w-lg lg:max-w-5xl xl:max-w-6xl mx-auto px-4 py-5">
           <Suspense fallback={
-            <div className="flex items-center justify-center h-[50vh]">
-              <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
+            <div className="space-y-6 animate-pulse">
+              <div className="rounded-[24px] p-6 lg:p-8 bg-[#f5f5f7] border border-[#e5e5ea]/30">
+                <div className="h-8 w-3/5 rounded-xl bg-gray-100" />
+                <div className="h-4 w-2/5 rounded-xl bg-gray-100 mt-2" />
+              </div>
+              <div className="grid lg:grid-cols-2 gap-4">
+                <div className="h-[88px] rounded-[20px] bg-gray-100" />
+                <div className="h-[88px] rounded-[20px] bg-gray-100" />
+              </div>
+              <div className="h-[140px] rounded-[20px] bg-gray-100" />
             </div>
           }>
             {children}
@@ -168,17 +191,17 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </main>
 
-      {navExpanded && (
+      {showMoreSheet && (
         <>
-          <div className="fixed inset-0 z-20 bg-black/20" onClick={() => setNavExpanded(false)} />
-          <div className="fixed bottom-[76px] left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.08)] animate-slide-up max-w-lg mx-auto">
-            <div className="px-5 py-4 space-y-5 max-h-[40vh] overflow-y-auto">
+          <div className="fixed inset-0 z-20 bg-black/20" onClick={() => setShowMoreSheet(false)} />
+          <div className="fixed bottom-[84px] left-4 right-4 z-30 glass-strong rounded-[20px] shadow-[0_-4px_24px_rgba(0,0,0,0.12)] animate-slide-up max-w-lg mx-auto">
+            <div className="px-5 py-4 space-y-5 max-h-[55vh] overflow-y-auto">
               {extraNav.map((section) => (
                 <div key={section.sectionKey}>
                   <p className="text-[11px] uppercase tracking-wider font-semibold text-[#6e6e73] mb-2 px-1">{t(section.sectionKey)}</p>
                   <div className="grid grid-cols-3 gap-2">
                     {section.items.map((item) => (
-                      <Link key={item.href} to={item.href} onClick={() => setNavExpanded(false)}
+                      <Link key={item.href} to={item.href} onClick={() => setShowMoreSheet(false)}
                         className={cn("flex flex-col items-center gap-1.5 py-3 px-2 rounded-[14px] transition-all duration-200",
                           pathname === item.href ? "bg-[#007aff]/10 text-[#007aff]" : "text-[#6e6e73] hover:bg-[#f5f5f7]")}>
                         <item.icon className={cn("w-[22px] h-[22px]", pathname === item.href ? "text-[#007aff]" : "text-[#6e6e73]")} />
@@ -206,9 +229,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             )
           })}
-          <button onClick={() => setNavExpanded(!navExpanded)}
+          <button onClick={() => setShowMoreSheet(true)} aria-label={t("navMore")}
             className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 min-w-[48px] rounded-[12px] text-[#6e6e73] hover:bg-[#f5f5f7] transition-all duration-200">
-            <ChevronUp className={cn("w-[22px] h-[22px] transition-transform duration-300", navExpanded && "rotate-180")} />
+            <Grid3X3 className="w-[22px] h-[22px]" />
             <span className="text-[10px] font-medium whitespace-nowrap">{t("navMore")}</span>
           </button>
         </div>

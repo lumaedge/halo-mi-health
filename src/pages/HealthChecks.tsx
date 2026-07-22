@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Heart, Activity, Syringe, Calendar, ArrowRight, Check, AlertCircle, ChevronRight, Stethoscope, Sparkles, Pill, ClipboardList } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { Condition } from "@/types"
+import { HealthChecksSkeleton } from "@/components/skeletons"
 
 type AgeGroup = "child" | "teen" | "adult" | "adult_40" | "senior"
 
@@ -134,7 +135,8 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default function HealthChecks() {
-  const { user } = useAuth()
+  const { user, profile: authProfile } = useAuth()
+  const pid = authProfile?.id ?? user?.id
   const [conditions, setConditions] = useState<Condition[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -142,21 +144,18 @@ export default function HealthChecks() {
   const [completedChecks, setCompletedChecks] = useState<Set<string>>(new Set())
 
   useEffect(() => {
-    if (!user) return
+    if (!pid) return
     async function load() {
-      const { data: prof } = await supabase.from("profiles").select("*").eq("user_id", user.id).single()
-      if (prof) {
-        setProfile(prof)
-        if (prof.date_of_birth) setAgeGroup(getAgeGroup(prof.date_of_birth))
-        const { data: conds } = await supabase.from("conditions").select("*").eq("patient_id", prof.id)
-        setConditions(conds || [])
-        const saved = localStorage.getItem(`health-checks-${prof.id}`)
-        if (saved) setCompletedChecks(new Set(JSON.parse(saved)))
-      }
+      setProfile(authProfile)
+      if ((authProfile as any)?.date_of_birth) setAgeGroup(getAgeGroup((authProfile as any).date_of_birth))
+      const { data: conds } = await supabase.from("conditions").select("*").eq("patient_id", pid)
+      setConditions(conds || [])
+      const saved = localStorage.getItem(`health-checks-${pid}`)
+      if (saved) setCompletedChecks(new Set(JSON.parse(saved)))
       setLoading(false)
     }
     load()
-  }, [user])
+  }, [pid, authProfile])
 
   function toggleCheck(id: string) {
     setCompletedChecks(prev => {
@@ -173,13 +172,7 @@ export default function HealthChecks() {
   const totalChecks = group.checks.length
   const doneChecks = group.checks.filter(c => completedChecks.has(c.id)).length
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#007aff] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  if (loading) return <HealthChecksSkeleton />
 
   return (
     <div className="space-y-6 animate-fade-in">

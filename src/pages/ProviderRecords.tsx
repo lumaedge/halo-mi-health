@@ -4,7 +4,8 @@ import { useAuth } from "@/App"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Shield, Loader2, Eye } from "lucide-react"
+import { Shield, Eye } from "lucide-react"
+import { CardListSkeletonFallback } from "@/components/skeletons"
 import { ImagePreview } from "@/components/records/image-preview"
 
 export default function ProviderRecords() {
@@ -31,7 +32,7 @@ export default function ProviderRecords() {
   const pending = records.filter((r) => !r.is_approved)
   const approved = records.filter((r) => r.is_approved)
 
-  if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-[#6e6e73]" /></div>
+  if (loading) return <CardListSkeletonFallback count={4} />
 
   return (
     <div className="space-y-6 animate-fade-in">
