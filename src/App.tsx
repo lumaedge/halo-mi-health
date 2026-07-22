@@ -9,6 +9,7 @@ import { LayoutDashboard, Clock, Shield, Pill, User, Share2, AlertTriangle, Hear
 import { I18nProvider, useI18n } from "@/lib/i18n/I18nProvider"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
 import { OnboardingWizard } from "@/components/shared/OnboardingWizard"
+import { Analytics } from "@vercel/analytics/react"
 
 const Login = lazy(() => import("@/pages/Login"))
 const Register = lazy(() => import("@/pages/Register"))
@@ -268,6 +269,7 @@ export default function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" toastOptions={{ style: { borderRadius: "12px", border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}} />
+      <Analytics />
       </I18nProvider>
     </AuthProvider>
   )
